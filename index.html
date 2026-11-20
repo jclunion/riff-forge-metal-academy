@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RiffForge Academy — Plateforme d'Apprentissage Guitare Metal</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Transitions fluides et scrollbar discrète */
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
+    .tab-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .tab-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 999px;
+    }
+    .nav-active {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+    .nav-idle {
+      color: var(--muted-foreground);
+    }
+    .nav-idle:hover {
+      background: var(--content);
+      color: var(--foreground);
+    }
+    .step-active {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      transform: scale(1.08);
+    }
+    input[type="range"] {
+      accent-color: var(--primary);
+    }
+    .fret-dot {
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
+  <div class="flex min-h-screen flex-col lg:flex-row">
+    <!-- Barre latérale de navigation -->
+    <aside class="w-full lg:w-64 shrink-0 bg-[var(--sidebar)] border-b lg:border-b-0 lg:border-r border-[var(--border)] flex flex-col justify-between">
+      <div>
+        <!-- Identité -->
+        <div class="p-4 border-b border-[var(--border)] flex items-center justify-between lg:justify-start gap-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-bold tracking-tight text-sm leading-tight">RiffForge Academy</div>
+              <div class="text-xs text-[var(--muted-foreground)]">Guitare Metal Interactive</div>
+            </div>
+          </div>
+          <!-- Sélecteur compact mobile -->
+          <div class="lg:hidden">
+            <select id="learnerSelectMobile" class="text-xs bg-[var(--card)] border border-[var(--border)] rounded-md px-2 py-1.5 text-[var(--foreground)]"></select>
+          </div>
+        </div>
+
+        <!-- Sélecteur de profil apprenant (Desktop) -->
+        <div class="hidden lg:block p-3 border-b border-[var(--border)]">
+          <label for="learnerSelectDesktop" class="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5">Profil Apprenant</label>
+          <select id="learnerSelectDesktop" class="w-full text-xs bg-[var(--card)] border border-[var(--border)] rounded-md px-2.5 py-2 text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"></select>
+          <div id="sidebarProfileMeta" class="mt-2.5 flex items-center justify-between text-xs text-[var(--muted-foreground)]"></div>
+        </div>
+
+        <!-- Menu principal -->
+        <nav class="p-2.5 flex lg:flex-col gap-1 overflow-x-auto" aria-label="Navigation principale">
+          <button data-view="dashboard" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            Tableau de bord
+          </button>
+          <button data-view="catalog" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Catégories &amp; Cours
+          </button>
+          <button data-view="player" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Cours Interactif
+          </button>
+          <button data-view="progress" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
+            Suivi &amp; Progression
+          </button>
+        </nav>
+      </div>
+
+      <!-- Mini-widget objectif quotidien (Desktop) -->
+      <div class="hidden lg:block p-3 m-3 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <span class="font-medium">Objectif du jour</span>
+          <span id="dailyGoalText" class="font-mono tabular-nums text-[var(--muted-foreground)]">0/45 min</span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-[var(--content)] overflow-hidden">
+          <div id="dailyGoalBar" class="h-full rounded-full bg-[var(--primary)] transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <button id="addPracticeBtn" class="mt-2.5 w-full py-1.5 px-2.5 rounded-md text-xs font-medium bg-[var(--content)] hover:bg-[var(--border)] text-[var(--foreground)] transition-colors">
+          + Enregistrer 15 min de jeu
+        </button>
+      </div>
+    </aside>
+
+    <!-- Zone de contenu principale -->
+    <main class="flex-1 min-w-0 flex flex-col">
+      <!-- En-tête contextuel -->
+      <header class="sticky top-0 z-20 bg-[var(--background)] border-b border-[var(--border)] px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 id="pageTitle" class="text-base font-bold tracking-tight">Tableau de bord</h1>
+          <p id="pageSubtitle" class="text-xs text-[var(--muted-foreground)]">Vue d'ensemble de votre pratique quotidienne et de vos objectifs metal</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div id="streakPill" class="px-2.5 py-1 rounded-md bg-[var(--card)] border border-[var(--border)] text-xs font-medium flex items-center gap-1.5 tabular-nums">
+            <svg class="w-3.5 h-3.5 text-[var(--warning)]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.5 3.5-2 5.5-2 8 0 1.5 1 2.5 2.5 2.5S15 11.5 15 10c0-1 .5-2 1-2.5 1.5 1.5 3 4 3 6.5a7 7 0 1 1-14 0c0-3.5 2.5-7 7-12z"/></svg>
+            <span id="streakCount">0 jours</span>
+          </div>
+          <div class="px-2.5 py-1 rounded-md bg-[var(--card)] border border-[var(--border)] text-xs font-mono tabular-nums">
+            <span id="xpCount">0 XP</span>
+          </div>
+          <button id="quickResumeBtn" class="px-3 py-1.5 rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium hover:opacity-90 transition-opacity">
+            Reprendre la leçon
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteneur des vues -->
+      <div class="p-5 space-y-6 flex-1">
+        <!-- VUE 1 : TABLEAU DE BORD -->
+        <section id="view-dashboard" class="space-y-5">
+          <!-- Cartes KPI -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="dashboardKpis"></div>
+
+          <!-- Grille principale : Cours actifs + Graphique d'activité -->
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+            <!-- Cours en cours -->
+            <div class="xl:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-sm font-semibold">Cours en cours</h2>
+                  <p class="text-xs text-[var(--muted-foreground)]">Poursuivez votre entraînement là où vous vous êtes arrêté</p>
+                </div>
+                <button data-goto="catalog" class="text-xs font-medium text-[var(--link)] hover:underline">Tout le catalogue</button>
+              </div>
+              <div id="activeCoursesList" class="space-y-3"></div>
+            </div>
+
+            <!-- Temps de pratique hebdomadaire (SVG) -->
+            <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between space-y-4">
+              <div>
+                <h2 class="text-sm font-semibold">Pratique cette semaine</h2>
+                <p class="text-xs text-[var(--muted-foreground)]">Minutes jouées par jour (objectif : <span id="chartGoalLabel">45</span> min)</p>
+              </div>
+              <div id="weeklyChartContainer" class="w-full h-44"></div>
+              <div class="pt-2 border-t border-[var(--border)] flex items-center justify-between text-xs">
+                <span class="text-[var(--muted-foreground)]">Total hebdomadaire</span>
+                <span id="weeklyTotalMinutes" class="font-mono font-semibold tabular-nums">0 min</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grille secondaire : Compétences Metal + Prochaines leçons vidéo -->
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+            <!-- Maîtrise par pilier technique -->
+            <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3.5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-sm font-semibold">Maîtrise technique</h2>
+                  <p class="text-xs text-[var(--muted-foreground)]">Évolution de vos fondamentaux guitare metal</p>
+                </div>
+                <button data-goto="progress" class="text-xs font-medium text-[var(--link)] hover:underline">Détails BPM</button>
+              </div>
+              <div id="dashboardSkillsList" class="space-y-3"></div>
+            </div>
+
+            <!-- Recommandations & Emplacements Vidéo à explorer -->
+            <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3.5">
+              <div>
+                <h2 class="text-sm font-semibold">Prochaines leçons vidéo recommandées</h2>
+                <p class="text-xs text-[var(--muted-foreground)]">Sélectionnées selon votre niveau et votre accordage favori</p>
+              </div>
+              <div id="recommendedLessonsList" class="space-y-2.5"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VUE 2 : CATÉGORIES & CATALOGUE -->
+        <section id="view-catalog" class="hidden space-y-5">
+          <!-- Barre de catégories -->
+          <div class="flex flex-wrap items-center gap-2" id="categoryTabs"></div>
+
+          <!-- Filtres secondaires -->
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 flex flex-wrap items-center gap-3">
+            <div class="flex-1 min-w-[200px]">
+              <input id="catalogSearch" type="text" placeholder="Rechercher un cours, une technique, un accordage..." class="w-full text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-[var(--foreground)] placeholder:text-[var(--placeholder)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]" />
+            </div>
+            <select id="filterDifficulty" class="text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-[var(--foreground)]">
+              <option value="all">Tous niveaux</option>
+              <option value="Débutant">Débutant</option>
+              <option value="Intermédiaire">Intermédiaire</option>
+              <option value="Avancé">Avancé</option>
+              <option value="Virtuose">Virtuose</option>
+            </select>
+            <select id="filterTuning" class="text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-[var(--foreground)]">
+              <option value="all">Tous accordages</option>
+              <option value="Standard E">Standard E</option>
+              <option value="Drop D">Drop D</option>
+              <option value="Drop C">Drop C</option>
+              <option value="Drop A (7 cordes)">Drop A (7 cordes)</option>
+            </select>
+            <span id="catalogCount" class="text-xs text-[var(--muted-foreground)] tabular-nums ml-auto">0 cours</span>
+          </div>
+
+          <!-- Grille des cours -->
+          <div id="catalogGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- VUE 3 : COURS INTERACTIF & LEÇON VIDÉO -->
+        <section id="view-player" class="hidden space-y-5">
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+            <!-- Colonne gauche (2/3) : Emplacement Vidéo + Tablature Interactive + Manche -->
+            <div class="xl:col-span-2 space-y-5">
+              <!-- Carte Emplacement Leçon Vidéo -->
+              <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden">
+                <!-- Barre supérieure de la leçon -->
+                <div class="px-4 py-3 border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div class="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                      <span id="playerCourseBadge" class="font-medium text-[var(--foreground)]"></span>
+                      <span>•</span>
+                      <span id="playerTuningBadge" class="font-mono"></span>
+                    </div>
+                    <h2 id="playerLessonTitle" class="text-sm font-bold mt-0.5"></h2>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <label class="cursor-pointer px-2.5 py-1.5 rounded-md bg-[var(--content)] hover:bg-[var(--border)] text-xs font-medium transition-colors" title="Charger un fichier vidéo local dans cet emplacement">
+                      Importer vidéo locale
+                      <input id="localVideoInput" type="file" accept="video/*" class="hidden" />
+                    </label>
+                    <button id="toggleCompleteLessonBtn" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"></button>
+                  </div>
+                </div>
+
+                <!-- Zone Emplacement Vidéo 16:9 -->
+                <div class="relative aspect-video bg-[var(--content)] flex flex-col justify-between overflow-hidden">
+                  <!-- Lecteur natif affiché uniquement si l'utilisateur importe une vidéo -->
+                  <video id="nativeVideoElement" class="hidden w-full h-full object-contain bg-black" controls></video>
+
+                  <!-- Emplacement Vidéo Studio Interactif (par défaut) -->
+                  <div id="videoSlotPlaceholder" class="w-full h-full flex flex-col justify-between p-4 sm:p-6">
+                    <!-- En-tête caméra / statut -->
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-[var(--card)] border border-[var(--border)] text-xs font-mono">EMPLACEMENT VIDÉO HD</span>
+                        <span id="videoCameraLabel" class="px-2 py-0.5 rounded bg-[var(--card)] border border-[var(--border)] text-xs text-[var(--muted-foreground)]">Caméra : Vue Double Split</span>
+                      </div>
+                      <span id="videoDurationLabel" class="px-2 py-0.5 rounded bg-[var(--card)] border border-[var(--border)] text-xs font-mono tabular-nums">00:00 / 08:40</span>
+                    </div>
+
+                    <!-- Centre : bouton de lecture simulée et aperçu de l'emplacement -->
+                    <div class="flex flex-col items-center justify-center text-center my-auto py-4">
+                      <button id="videoPlayBtn" class="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center hover:opacity-90 transition-opacity shadow-sm" aria-label="Lire ou mettre en pause la leçon vidéo">
+                        <svg id="videoPlayIcon" class="w-6 h-6 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                      </button>
+                      <p id="videoSlotCaption" class="mt-3 text-sm font-semibold max-w-md"></p>
+                      <p class="mt-1 text-xs text-[var(--muted-foreground)] max-w-md">
+                        Emplacement prêt pour votre flux vidéo (MP4, WebM ou HLS). Utilisez les chapitres ci-dessous ou importez une vidéo locale pour tester.
+                      </p>
+                    </div>
+
+                    <!-- Barre de contrôle vidéo (Scrubber, Vitesse, Multi-angles) -->
+                    <div class="space-y-2.5 bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
+                      <div class="flex items-center gap-3">
+                        <input id="videoScrubber" type="range" min="0" max="100" value="0" class="flex-1 h-1.5" />
+                        <span id="videoSpeedBadge" class="text-xs font-mono tabular-nums w-10 text-right">1.0x</span>
+                      </div>
+                      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="flex flex-wrap items-center gap-1.5" id="cameraAngleBtns">
+                          <button data-angle="Vue Double Split" class="angle-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--primary)] text-[var(--primary-foreground)]">Double Split</button>
+                          <button data-angle="Main Droite (Médiator)" class="angle-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)]">Main Droite</button>
+                          <button data-angle="Manche (Main Gauche)" class="angle-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)]">Manche</button>
+                        </div>
+                        <div class="flex items-center gap-1" id="videoSpeedBtns">
+                          <button data-speed="0.5" class="speed-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)]">0.5x</button>
+                          <button data-speed="0.75" class="speed-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)]">0.75x</button>
+                          <button data-speed="1" class="speed-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--primary)] text-[var(--primary-foreground)]">1.0x</button>
+                          <button data-speed="1.25" class="speed-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)]">1.25x</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chapitres de la leçon vidéo -->
+                <div class="px-4 py-3 border-t border-[var(--border)] bg-[var(--card)]">
+                  <div class="text-xs font-medium text-[var(--muted-foreground)] mb-2">Chapitres de la vidéo</div>
+                  <div id="videoChaptersList" class="flex flex-wrap gap-2"></div>
+                </div>
+              </div>
+
+              <!-- Atelier Interactif : Tablature + Synthétiseur Web Audio + Manche -->
+              <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+                  <div>
+                    <h3 class="text-sm font-semibold">Tablature Interactive &amp; Métronome</h3>
+                    <p class="text-xs text-[var(--muted-foreground)]">Cliquez sur une note pour l'écouter ou lancez la boucle avec le moteur audio intégré</p>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <button id="tabPlayBtn" class="px-3.5 py-1.5 rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                      <span>Jouer le riff</span>
+                    </button>
+                    <button id="metronomeToggleBtn" class="px-2.5 py-1.5 rounded-md border border-[var(--border)] bg-[var(--background)] text-xs font-medium">
+                      Métronome : ON
+                    </button>
+                    <button id="bpmBoostBtn" class="px-2.5 py-1.5 rounded-md border border-[var(--border)] bg-[var(--background)] text-xs font-medium hover:bg-[var(--content)]">
+                      +5 BPM
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Contrôle BPM et Tempo cible -->
+                <div class="flex flex-wrap items-center justify-between gap-4 text-xs">
+                  <div class="flex items-center gap-3 flex-1 min-w-[220px]">
+                    <span class="text-[var(--muted-foreground)] font-medium">Tempo</span>
+                    <input id="bpmSlider" type="range" min="60" max="220" value="120" class="flex-1" />
+                    <span id="bpmReadout" class="font-mono font-bold tabular-nums w-16 text-right">120 BPM</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[var(--muted-foreground)]">Tempo cible :</span>
+                    <span id="targetBpmReadout" class="font-mono font-semibold tabular-nums">160 BPM</span>
+                    <button id="saveBpmRecordBtn" class="ml-2 px-2.5 py-1 rounded bg-[var(--content)] hover:bg-[var(--border)] text-xs font-medium transition-colors">
+                      Enregistrer ce BPM
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Grille de tablature 6 cordes -->
+                <div class="overflow-x-auto tab-scroll rounded-lg border border-[var(--border)] bg-[var(--background)] p-3">
+                  <div id="tablatureGrid" class="min-w-[540px] font-mono text-xs select-none"></div>
+                </div>
+
+                <!-- Visualiseur de manche synchronisé -->
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-[var(--muted-foreground)]">Manche synchronisé (frettes 0 à 12)</span>
+                    <span id="activeNoteLabel" class="font-mono text-[var(--foreground)]">Prêt</span>
+                  </div>
+                  <div id="fretboardContainer" class="overflow-x-auto tab-scroll rounded-lg border border-[var(--border)] bg-[var(--background)] p-2.5"></div>
+                </div>
+              </div>
+
+              <!-- Quiz de validation & Notes personnelles -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Quiz -->
+                <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3">
+                  <h3 class="text-sm font-semibold">Vérification rapide</h3>
+                  <p id="quizQuestion" class="text-xs text-[var(--foreground)] leading-relaxed"></p>
+                  <div id="quizOptions" class="space-y-2"></div>
+                  <div id="quizFeedback" class="text-xs hidden rounded-md p-2.5"></div>
+                </div>
+
+                <!-- Notes personnelles -->
+                <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between space-y-3">
+                  <div>
+                    <h3 class="text-sm font-semibold">Carnet de pratique</h3>
+                    <p class="text-xs text-[var(--muted-foreground)]">Notez vos réglages d'ampli, médiator ou points de blocage</p>
+                  </div>
+                  <textarea id="lessonNotesInput" rows="4" placeholder="Ex : Bien relâcher le poignet droit à partir de 150 BPM, médiator Jazz III..." class="w-full text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 text-[var(--foreground)] placeholder:text-[var(--placeholder)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"></textarea>
+                  <div class="flex items-center justify-between text-xs">
+                    <span id="notesSavedStatus" class="text-[var(--muted-foreground)]">Sauvegarde automatique</span>
+                    <button id="saveNotesBtn" class="px-2.5 py-1 rounded bg-[var(--content)] hover:bg-[var(--border)] font-medium">Sauvegarder</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Colonne droite (1/3) : Programme du cours + Objectifs de la leçon -->
+            <div class="space-y-5">
+              <!-- Progression du cours -->
+              <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold">Programme du cours</span>
+                  <span id="courseProgressText" class="font-mono tabular-nums text-[var(--muted-foreground)]">0/0</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-[var(--content)] overflow-hidden">
+                  <div id="courseProgressBar" class="h-full bg-[var(--primary)] transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div id="courseLessonsList" class="space-y-1.5 pt-1"></div>
+              </div>
+
+              <!-- Checklist de maîtrise -->
+              <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3">
+                <div>
+                  <h3 class="text-sm font-semibold">Critères de maîtrise</h3>
+                  <p class="text-xs text-[var(--muted-foreground)]">Cochez chaque étape validée proprement</p>
+                </div>
+                <div id="lessonChecklist" class="space-y-2"></div>
+              </div>
+
+              <!-- Fiche technique du cours -->
+              <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-2.5 text-xs">
+                <h3 class="text-sm font-semibold">Fiche technique</h3>
+                <div id="lessonTechSpecs" class="space-y-2"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VUE 4 : SUIVI DE LA PROGRESSION -->
+        <section id="view-progress" class="hidden space-y-5">
+          <!-- En-tête de synthèse -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="progressSummaryCards"></div>
+
+          <!-- Suivi des records BPM par exercice -->
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 class="text-sm font-semibold">Progression de vélocité (Records BPM)</h2>
+                <p class="text-xs text-[var(--muted-foreground)]">Comparez votre tempo maîtrisé actuel au tempo cible de chaque riff</p>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
+                    <th class="py-2.5 pr-4 font-medium">Leçon / Exercice</th>
+                    <th class="py-2.5 px-3 font-medium">Catégorie</th>
+                    <th class="py-2.5 px-3 font-medium">Record Actuel</th>
+                    <th class="py-2.5 px-3 font-medium">Objectif</th>
+                    <th class="py-2.5 px-3 font-medium w-44">Atteinte</th>
+                    <th class="py-2.5 pl-3 font-medium text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="bpmTableBody" class="divide-y divide-[var(--border)]"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Badges & Assiduité -->
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+            <!-- Badges débloqués -->
+            <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3.5">
+              <div>
+                <h2 class="text-sm font-semibold">Succès &amp; Jalons Metal</h2>
+                <p class="text-xs text-[var(--muted-foreground)]">Débloquez des badges en complétant vos cours et en franchissant des paliers BPM</p>
+              </div>
+              <div id="badgesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            </div>
+
+            <!-- Journal d'assiduité (28 derniers jours) -->
+            <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3.5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-sm font-semibold">Régularité sur 4 semaines</h2>
+                  <p class="text-xs text-[var(--muted-foreground)]">Intensité quotidienne de pratique</p>
+                </div>
+                <span class="text-xs text-[var(--muted-foreground)]">Moins → Plus</span>
+              </div>
+              <div id="consistencyGrid" class="grid grid-cols-7 gap-2"></div>
+              <div class="pt-2 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--muted-foreground)]">
+                <span>Sessions validées ce mois-ci</span>
+                <span id="monthlySessionsCount" class="font-mono font-semibold text-[var(--foreground)] tabular-nums">0 / 28 jours</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast de notification discret -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 hidden px-3.5 py-2.5 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-xs font-medium shadow-md"></div>
+
+  <script>
+    // =========================================================================
+    // 1. DONNÉES PÉDAGOGIQUES (CATÉGORIES, COURS, LEÇONS, TABLATURES, PROFILS)
+    // =========================================================================
+    const CATEGORIES = [
+      { id: 'all', label: 'Tous les cours' },
+      { id: 'rythmique', label: 'Rythmique & Palm Muting' },
+      { id: 'shred', label: 'Shred & Vélocité' },
+      { id: 'sweep', label: 'Sweep Picking & Arpèges' },
+      { id: 'djent', label: 'Metal Moderne & Djent' },
+      { id: 'theorie', label: 'Théorie & Harmonie Metal' }
+    ];
+
+    const COURSES = [
+      {
+        id: 'thrash-rythmique',
+        title: 'Fondamentaux Thrash : Downpicking & Gallop',
+        category: 'rythmique',
+        categoryLabel: 'Rythmique & Palm Muting',
+        difficulty: 'Intermédiaire',
+        tuning: 'Standard E',
+        instructor: 'Damien K. (Session Thrash)',
+        duration: '2h 15m',
+        description: 'Maîtrisez la précision chirurgicale du palm muting, le galop en triolets et l’endurance en coups vers le bas à haute vitesse.',
+        lessons: [
+          {
+            id: 'thrash-1',
+            title: 'Le Galop Thrash en Mi Mineur',
+            durationSec: 520,
+            targetBpm: 165,
+            defaultBpm: 120,
+            videoCaption: 'Placement du tranchant de la main droite sur le chevalet et attaque sèche en 16e.',
+            chapters: [
+              { label: '00:00 — Posture & Chevalet', pct: 0 },
+              { label: '02:15 — Décomposition à 50%', pct: 26 },
+              { label: '05:10 — Enchaînement Power Chords', pct: 60 },
+              { label: '07:20 — Tempo cible 165 BPM', pct: 85 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            // 16 pas (doubles-croches), chaque pas : { string: 0..5 (0=aigu, 5=grave), fret: number, pm?: boolean }
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 8, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 5, pm: false }, { s: 4, f: 7, pm: false }, { s: 5, f: 3, pm: false }
+            ],
+            checklist: [
+              'Maintenir un étouffement homogène sans étouffer la note harmonique',
+              'Enchaîner 4 mesures propres à 120 BPM sans crispation',
+              'Détacher nettement les accents non-étouffés sur la corde de La',
+              'Atteindre 150 BPM avec un métronome stable'
+            ],
+            quiz: {
+              question: 'Où doit reposer le tranchant de la paume droite pour obtenir un palm mute percussif et défini ?',
+              options: [
+                'Directement sur le micro manche pour un son chaud',
+                'Juste devant les pontets du chevalet',
+                'À 5 cm derrière le chevalet'
+              ],
+              correctIndex: 1,
+              explanation: 'Placer la paume juste au point de contact des cordes sur les pontets préserve la hauteur de note tout en ajoutant du punch.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.14 mm à 1.5 mm (pointe précise)',
+              'Gain / Ampli': 'High-gain serré + Overdrive en boost',
+              'Technique clé': 'Palm Muting + Galop (croche + 2 doubles)'
+            }
+          },
+          {
+            id: 'thrash-2',
+            title: 'Endurance Downpicking Chromatique',
+            durationSec: 465,
+            targetBpm: 185,
+            defaultBpm: 135,
+            videoCaption: 'Mouvement économique du poignet pour soutenir des riffs 100% coups vers le bas.',
+            chapters: [
+              { label: '00:00 — Angle du médiator (45°)', pct: 0 },
+              { label: '02:00 — Exercice chromatique E-F-F#-G', pct: 28 },
+              { label: '04:40 — Gestion de la fatigue', pct: 62 },
+              { label: '06:30 — Défi 185 BPM', pct: 84 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 1, pm: true }, { s: 5, f: 2, pm: true }, { s: 5, f: 3, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 2, pm: true }, { s: 5, f: 3, pm: true }, { s: 4, f: 2, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 1, pm: true }, { s: 5, f: 2, pm: true }, { s: 5, f: 3, pm: false },
+              { s: 4, f: 3, pm: false }, { s: 4, f: 2, pm: false }, { s: 5, f: 3, pm: true }, { s: 5, f: 2, pm: true }
+            ],
+            checklist: [
+              'Incliner légèrement le médiator pour réduire la résistance sur la corde',
+              'Garder l’avant-bras détendu pendant 8 mesures consécutives',
+              'Synchroniser la levée du doigt gauche avec l’attaque droite'
+            ],
+            quiz: {
+              question: 'Quel facteur limite le plus souvent la vitesse en downpicking pur ?',
+              options: [
+                'Une amplitude de mouvement trop large après avoir frappé la corde',
+                'L’utilisation de cordes neuves',
+                'Un accordage en Standard E'
+              ],
+              correctIndex: 0,
+              explanation: 'Réduire la course du médiator (mouvement compact du poignet) permet de gagner immédiatement en vélocité et endurance.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.38 mm rigide (type Jazz III)',
+              'Gain / Ampli': 'Médiums creusés modérément, attaque franche',
+              'Technique clé': 'Downpicking continu + chromatismes'
+            }
+          }
+        ]
+      },
+      {
+        id: 'shred-alternate',
+        title: 'Shred Moderne : Alternate Picking & Synchronisation',
+        category: 'shred',
+        categoryLabel: 'Shred & Vélocité',
+        difficulty: 'Avancé',
+        tuning: 'Standard E',
+        instructor: 'Sébastien V. (Lead Virtuose)',
+        duration: '3h 10m',
+        description: 'Développez une main droite redoutable sur 3 notes par corde avec des plans phrygiens et des séquences en sextolets.',
+        lessons: [
+          {
+            id: 'shred-1',
+            title: 'Séquences 3 Notes par Corde en Phrygien',
+            durationSec: 610,
+            targetBpm: 160,
+            defaultBpm: 105,
+            videoCaption: 'Changement de corde propre (pick slanting) sur des motifs ascendants en Mi Phrygien.',
+            chapters: [
+              { label: '00:00 — Doigté 3 notes / corde', pct: 0 },
+              { label: '03:10 — Échappement du médiator', pct: 32 },
+              { label: '06:20 — Groupes de 6 notes', pct: 64 },
+              { label: '08:50 — Mise en contexte solo', pct: 88 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 2, f: 9 }, { s: 2, f: 10 }, { s: 2, f: 12 }, { s: 1, f: 10 },
+              { s: 1, f: 12 }, { s: 1, f: 13 }, { s: 1, f: 12 }, { s: 1, f: 10 },
+              { s: 0, f: 10 }, { s: 0, f: 12 }, { s: 0, f: 13 }, { s: 0, f: 12 },
+              { s: 0, f: 10 }, { s: 1, f: 13 }, { s: 1, f: 12 }, { s: 1, f: 10 }
+            ],
+            checklist: [
+              'Alterner strictement bas-haut-bas-haut sans saut de médiator',
+              'Étouffer les cordes graves non jouées avec la paume droite',
+              'Jouer la séquence en boucle fluide à 130 BPM'
+            ],
+            quiz: {
+              question: 'Quel intervalle donne sa couleur sombre et tendue au mode Phrygien ?',
+              options: [
+                'La seconde mineure (1 demi-ton au-dessus de la tonique)',
+                'La sixte majeure',
+                'La quarte augmentée'
+              ],
+              correctIndex: 0,
+              explanation: 'La seconde mineure (b2) juste au-dessus de la tonique crée la signature caractéristique du Metal Phrygien.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E',
+              'Médiator conseillé': 'Pointe fine (1.4 mm)',
+              'Gain / Ampli': 'Lead saturé + léger Delay 320 ms',
+              'Technique clé': 'Alternate Picking strict + Pick Slanting'
+            }
+          }
+        ]
+      },
+      {
+        id: 'sweep-neoclassique',
+        title: 'Sweep Picking Néoclassique (3 à 5 Cordes)',
+        category: 'sweep',
+        categoryLabel: 'Sweep Picking & Arpèges',
+        difficulty: 'Virtuose',
+        tuning: 'Standard E',
+        instructor: 'Clara M. (Shred Néoclassique)',
+        duration: '2h 45m',
+        description: 'Enchaînez des arpèges mineurs, diminués et majeurs avec une séparation cristalline de chaque note.',
+        lessons: [
+          {
+            id: 'sweep-1',
+            title: 'Arpège de La Mineur sur 5 Cordes',
+            durationSec: 540,
+            targetBpm: 145,
+            defaultBpm: 90,
+            videoCaption: 'Mouvement continu du balayage et roulé de l’annulaire sans résonance parasite.',
+            chapters: [
+              { label: '00:00 — Forme de l’arpège Am', pct: 0 },
+              { label: '02:30 — Technique du Finger Rolling', pct: 29 },
+              { label: '05:45 — Pull-off au sommet (frette 12)', pct: 64 },
+              { label: '07:50 — Enchaînement fluide', pct: 87 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 4, f: 12 }, { s: 3, f: 10 }, { s: 2, f: 9 }, { s: 1, f: 10 },
+              { s: 0, f: 8 }, { s: 0, f: 12 }, { s: 0, f: 8 }, { s: 1, f: 10 },
+              { s: 2, f: 9 }, { s: 3, f: 10 }, { s: 4, f: 12 }, { s: 4, f: 7 },
+              { s: 3, f: 10 }, { s: 2, f: 9 }, { s: 1, f: 10 }, { s: 0, f: 12 }
+            ],
+            checklist: [
+              'Relâcher chaque doigt gauche dès que la note suivante sonne',
+              'Glisser le médiator en un seul mouvement fluide (pas de coups isolés)',
+              'Réussir le pull-off 12 → 8 sur la corde de Mi aigu avec régularité'
+            ],
+            quiz: {
+              question: 'Quelle est l’erreur la plus fréquente en Sweep Picking ?',
+              options: [
+                'Laisser les notes résonner ensemble comme un accord plaqué',
+                'Jouer avec un métronome lent',
+                'Utiliser le micro manche'
+              ],
+              correctIndex: 0,
+              explanation: 'Un sweep propre exige que chaque note soit isolée et mutée dès le passage à la corde suivante.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E',
+              'Médiator conseillé': 'Rigide biseauté (1.5 mm)',
+              'Gain / Ampli': 'Micro manche, compression douce',
+              'Technique clé': 'Sweep Picking 5 cordes + Finger Roll'
+            }
+          }
+        ]
+      },
+      {
+        id: 'djent-polyrhythmes',
+        title: 'Metal Moderne & Djent : Syncopes en Drop C',
+        category: 'djent',
+        categoryLabel: 'Metal Moderne & Djent',
+        difficulty: 'Avancé',
+        tuning: 'Drop C',
+        instructor: 'Nolan R. (Prog Metal)',
+        duration: '2h 30m',
+        description: 'Construisez des riffs massifs en accordage Drop C mêlant ghost notes, déplacements rythmiques et accords suspendus.',
+        lessons: [
+          {
+            id: 'djent-1',
+            title: 'Groove Syncopé 3+3+2 en Drop C',
+            durationSec: 495,
+            targetBpm: 140,
+            defaultBpm: 100,
+            videoCaption: 'Découpage rythmique moderne sur une pulsation binaire 4/4 avec accents déplacés.',
+            chapters: [
+              { label: '00:00 — Accordage Drop C & Tirant', pct: 0 },
+              { label: '02:10 — Pattern 3+3+2 sur corde grave', pct: 27 },
+              { label: '05:00 — Accents aigus et silence', pct: 61 },
+              { label: '07:10 — Jeu avec batterie', pct: 86 }
+            ],
+            tuningNotes: ['d', 'A', 'F', 'C', 'G', 'C'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: false }, { s: 5, f: 0, pm: true },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true },
+              { s: 5, f: 3, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 5, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 8, pm: false }, { s: 4, f: 7, pm: false }, { s: 5, f: 0, pm: true }
+            ],
+            checklist: [
+              'Marquer les silences nets avec un étouffement main gauche',
+              'Sentir la caisse claire sur le temps 3 malgré la syncope',
+              'Maintenir une attaque régulière sur la grosse corde en Do'
+            ],
+            quiz: {
+              question: 'Comment obtient-on la séparation ultra-sèche caractéristique des riffs Djent ?',
+              options: [
+                'En ajoutant beaucoup de réverbération',
+                'En combinant un noise gate serré et un étouffement précis des deux mains',
+                'En baissant totalement les médiums'
+              ],
+              correctIndex: 1,
+              explanation: 'Un noise gate bien réglé combiné au muting synchronisé main droite / main gauche coupe instantanément les silences.'
+            },
+            techSpecs: {
+              'Accordage': 'Drop C (C G C F A d)',
+              'Médiator conseillé': '1.2 mm + tirant de cordes 11-56',
+              'Gain / Ampli': 'Noise gate rapide + boost médiums-aigus',
+              'Technique clé': 'Syncopes 3+3+2 + Double Muting'
+            }
+          }
+        ]
+      },
+      {
+        id: 'drop-d-debutant',
+        title: 'Premiers Riffs Metal en Drop D',
+        category: 'rythmique',
+        categoryLabel: 'Rythmique & Palm Muting',
+        difficulty: 'Débutant',
+        tuning: 'Drop D',
+        instructor: 'Damien K. (Session Thrash)',
+        duration: '1h 40m',
+        description: 'Démarrez la guitare metal avec des power chords à un doigt, des riffs lourds en Drop D et la coordination main droite/gauche.',
+        lessons: [
+          {
+            id: 'dropd-1',
+            title: 'Power Chords à Un Doigt & Groove Lourd',
+            durationSec: 410,
+            targetBpm: 125,
+            defaultBpm: 90,
+            videoCaption: 'Passage rapide en Drop D et enchaînement de power chords massifs.',
+            chapters: [
+              { label: '00:00 — S’accorder en Drop D', pct: 0 },
+              { label: '01:50 — Barré de l’index sur 3 cordes', pct: 28 },
+              { label: '04:20 — Alternance étouffé / ouvert', pct: 64 },
+              { label: '06:00 — Riff complet', pct: 88 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'D'],
+            tabSteps: [
+              { s: 5, f: 0, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 3, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 5, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 6, pm: false },
+              { s: 5, f: 5, pm: false }, { s: 5, f: 3, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true },
+              { s: 5, f: 3, pm: false }, { s: 5, f: 5, pm: false }, { s: 5, f: 3, pm: false }, { s: 5, f: 0, pm: true }
+            ],
+            checklist: [
+              'Vérifier la justesse de la corde grave en Ré (octave de la 4e corde)',
+              'Plaquer proprement les frettes 3 et 5 sans friser',
+              'Rester calé sur le clic à 110 BPM'
+            ],
+            quiz: {
+              question: 'Quelle corde est descendue d’un ton pour passer de Standard E à Drop D ?',
+              options: [
+                'La corde la plus aiguë (Mi aigu)',
+                'La corde la plus grave (Mi grave → Ré)',
+                'Toutes les cordes d’un demi-ton'
+              ],
+              correctIndex: 1,
+              explanation: 'En Drop D, seule la 6e corde est détendue d’un ton entier (de Mi à Ré), permettant les power chords à un doigt.'
+            },
+            techSpecs: {
+              'Accordage': 'Drop D (D A D G B e)',
+              'Médiator conseillé': '0.88 mm à 1.14 mm',
+              'Gain / Ampli': 'Distorsion rock/metal équilibrée',
+              'Technique clé': 'Power chords Drop D + Palm Mute'
+            }
+          }
+        ]
+      },
+      {
+        id: 'harmonie-metal',
+        title: 'Harmonie Metal : Mineur Harmonique & 7 Cordes',
+        category: 'theorie',
+        categoryLabel: 'Théorie & Harmonie Metal',
+        difficulty: 'Intermédiaire',
+        tuning: 'Drop A (7 cordes)',
+        instructor: 'Clara M. (Shred Néoclassique)',
+        duration: '2h 05m',
+        description: 'Composez des harmonies de guitares tiercées, exploitez la gamme mineure harmonique et structurez des riffs épiques.',
+        lessons: [
+          {
+            id: 'harm-1',
+            title: 'Motif Mélodique en Ré Mineur Harmonique',
+            durationSec: 480,
+            targetBpm: 135,
+            defaultBpm: 95,
+            videoCaption: 'Utilisation de la septième majeure (sensible) pour créer une tension dramatique.',
+            chapters: [
+              { label: '00:00 — Structure du mineur harmonique', pct: 0 },
+              { label: '02:30 — Intervalle de seconde augmentée', pct: 31 },
+              { label: '05:15 — Harmonisation à la tierce', pct: 66 },
+              { label: '07:05 — Application riff mélodeath', pct: 88 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 3, f: 7 }, { s: 3, f: 9 }, { s: 3, f: 10 }, { s: 2, f: 7 },
+              { s: 2, f: 9 }, { s: 2, f: 10 }, { s: 1, f: 9 }, { s: 1, f: 10 },
+              { s: 1, f: 9 }, { s: 2, f: 10 }, { s: 2, f: 9 }, { s: 2, f: 7 },
+              { s: 3, f: 10 }, { s: 3, f: 9 }, { s: 3, f: 6 }, { s: 3, f: 7 }
+            ],
+            checklist: [
+              'Identifier la note sensible (Do# en Ré mineur harmonique)',
+              'Accentuer le saut d’un ton et demi (Si♭ → Do#)',
+              'Rejouer le motif en vibrato contrôlé sur la note finale'
+            ],
+            quiz: {
+              question: 'Quelle note distingue la gamme mineure harmonique de la gamme mineure naturelle ?',
+              options: [
+                'Une septième majeure (haussée d’un demi-ton)',
+                'Une tierce majeure',
+                'Une quinte diminuée'
+              ],
+              correctIndex: 0,
+              explanation: 'La septième majeure crée une attraction forte vers la tonique et un intervalle caractéristique d’un ton et demi avec la b6.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E ou Drop A (7 cordes)',
+              'Médiator conseillé': '1.14 mm',
+              'Gain / Ampli': 'High-gain défini + légère réverbe',
+              'Technique clé': 'Mineur harmonique & Mélodeath'
+            }
+          }
+        ]
+      }
+    ];
+
+    const BADGES = [
+      { id: 'b1', title: 'Premier Sang (Riff Validé)', desc: 'Compléter votre première leçon interactive', condition: s => s.completedLessons.length >= 1 },
+      { id: 'b2', title: 'Mur du Son (150+ BPM)', desc: 'Enregistrer un record personnel à 150 BPM ou plus', condition: s => Object.values(s.bpmRecords).some(v => v >= 150) },
+      { id: 'b3', title: 'Discipline de Fer', desc: 'Atteindre une série active de 5 jours ou plus', condition: s => s.streak >= 5 },
+      { id: 'b4', title: 'Polyvalence Metal', desc: 'Compléter au moins 3 leçons dans la plateforme', condition: s => s.completedLessons.length >= 3 }
+    ];
+
+    const DEFAULT_LEARNERS = {
+      lucas: {
+        id: 'lucas',
+        name: 'Lucas M.',
+        level: 'Intermédiaire',
+        specialty: 'Thrash & Drop D',
+        dailyGoalMin: 45,
+        todayMinutes: 30,
+        streak: 6,
+        xp: 1240,
+        weeklyMinutes: [35, 50, 25, 45, 60, 40, 30], // Lun..Dim
+        monthlyGrid: [1,2,1,0,2,3,2, 1,1,2,2,0,3,2, 2,1,3,2,1,0,2, 3,2,2,1,2,3,2],
+        completedLessons: ['dropd-1', 'thrash-1'],
+        bpmRecords: {
+          'dropd-1': 125,
+          'thrash-1': 152,
+          'thrash-2': 140,
+          'shred-1': 110,
+          'sweep-1': 95,
+          'djent-1': 105,
+          'harm-1': 100
+        },
+        skills: [
+          { name: 'Palm Muting & Précision', score: 82 },
+          { name: 'Downpicking & Endurance', score: 74 },
+          { name: 'Alternate Picking (Shred)', score: 58 },
+          { name: 'Sweep Picking & Arpèges', score: 38 },
+          { name: 'Rythmique Syncopée / Djent', score: 52 },
+          { name: 'Harmonie & Gammes Metal', score: 61 }
+        ],
+        checklistState: {
+          'thrash-1': [true, true, true, false]
+        },
+        notes: {
+          'thrash-1': 'Médiator 1.4mm : beaucoup plus net sur le galop. Travailler la transition vers 165 BPM demain.'
+        },
+        lastLessonId: 'thrash-1'
+      },
+      camille: {
+        id: 'camille',
+        name: 'Camille R.',
+        level: 'Avancé',
+        specialty: 'Prog / Djent & Sweep',
+        dailyGoalMin: 60,
+        todayMinutes: 45,
+        streak: 11,
+        xp: 2680,
+        weeklyMinutes: [60, 55, 70, 45, 80, 65, 45],
+        monthlyGrid: [2,3,2,2,3,3,2, 2,2,3,1,2,3,3, 3,2,3,2,2,1,3, 3,3,2,2,3,3,2],
+        completedLessons: ['dropd-1', 'thrash-1', 'thrash-2', 'djent-1', 'shred-1'],
+        bpmRecords: {
+          'dropd-1': 130,
+          'thrash-1': 170,
+          'thrash-2': 180,
+          'shred-1': 155,
+          'sweep-1': 132,
+          'djent-1': 140,
+          'harm-1': 135
+        },
+        skills: [
+          { name: 'Palm Muting & Précision', score: 92 },
+          { name: 'Downpicking & Endurance', score: 86 },
+          { name: 'Alternate Picking (Shred)', score: 84 },
+          { name: 'Sweep Picking & Arpèges', score: 76 },
+          { name: 'Rythmique Syncopée / Djent', score: 89 },
+          { name: 'Harmonie & Gammes Metal', score: 78 }
+        ],
+        checklistState: {
+          'sweep-1': [true, true, false]
+        },
+        notes: {
+          'sweep-1': 'Surveiller le roulé d’annulaire entre la corde de Si et de Sol à 135 BPM.'
+        },
+        lastLessonId: 'sweep-1'
+      }
+    };
+
+    // =========================================================================
+    // 2. GESTION D'ÉTAT & PERSISTANCE LOCALSTORAGE
+    // =========================================================================
+    const STORAGE_KEY = 'riffforge_academy_state_v1';
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.learners && parsed.activeLearnerId) return parsed;
+        }
+      } catch (e) {}
+      return {
+        activeLearnerId: 'lucas',
+        learners: JSON.parse(JSON.stringify(DEFAULT_LEARNERS))
+      };
+    }
+
+    let appState = loadState();
+    let currentView = 'dashboard';
+    let activeCategory = 'all';
+    let currentLessonId = getActiveLearner().lastLessonId || 'thrash-1';
+
+    // État du lecteur vidéo simulé
+    let videoPlaying = false;
+    let videoTimer = null;
+    let videoCurrentSec = 0;
+    let videoSpeed = 1.0;
+
+    // État du lecteur tablature / Web Audio
+    let audioCtx = null;
+    let tabPlaying = false;
+    let tabTimer = null;
+    let currentStepIdx = -1;
+    let metronomeEnabled = true;
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {}
+    }
+
+    function getActiveLearner() {
+      return appState.learners[appState.activeLearnerId];
+    }
+
+    function findLessonContext(lessonId) {
+      for (const course of COURSES) {
+        const lesson = course.lessons.find(l => l.id === lessonId);
+        if (lesson) return { course, lesson };
+      }
+      return { course: COURSES[0], lesson: COURSES[0].lessons[0] };
+    }
+
+    function getAllLessons() {
+      return COURSES.flatMap(c => c.lessons.map(l => ({ course: c, lesson: l })));
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    let toastTimeout = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => el.classList.add('hidden'), 2600);
+    }
+
+    // =========================================================================
+    // 3. MOTEUR AUDIO WEB AUDIO API (GUITARE SATURÉE + MÉTRONOME)
+    // =========================================================================
+    const BASE_STRING_MIDI = [64, 59, 55, 50, 45, 40]; // Standard E : e4, B3, G3, D3, A2, E2
+
+    function getStringBaseMidi(tuningStr, stringIdx) {
+      const offsets = {
+        'Standard E': [0, 0, 0, 0, 0, 0],
+        'Drop D': [0, 0, 0, 0, 0, -2],
+        'Drop C': [-2, -2, -2, -2, -2, -4],
+        'Drop A (7 cordes)': [-2, -2, -2, -2, -2, -5]
+      };
+      const off = offsets[tuningStr] || offsets['Standard E'];
+      return BASE_STRING_MIDI[stringIdx] + off[stringIdx];
+    }
+
+    function ensureAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function makeDistortionCurve(amount = 65) {
+      const n = 256;
+      const curve = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const x = (i * 2) / n - 1;
+        curve[i] = ((3 + amount) * x * 20 * (Math.PI / 180)) / (Math.PI + amount * Math.abs(x));
+      }
+      return curve;
+    }
+
+    function playGuitarNote(stringIdx, fret, isPalmMute, tuningStr) {
+      const ctx = ensureAudioCtx();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const midi = getStringBaseMidi(tuningStr, stringIdx) + fret;
+      const freq = 440 * Math.pow(2, (midi - 69) / 12);
+
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+
+      const shaper = ctx.createWaveShaper();
+      shaper.curve = makeDistortionCurve(isPalmMute ? 45 : 85);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(isPalmMute ? 950 : 2800, now);
+
+      const gain = ctx.createGain();
+      const duration = isPalmMute ? 0.14 : 0.28;
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.16, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      osc.connect(shaper);
+      shaper.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function playMetronomeClick(accent = false) {
+      const ctx = ensureAudioCtx();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(accent ? 1320 : 880, now);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    }
+
+    // =========================================================================
+    // 4. RENDU DE LA NAVIGATION ET DES PROFILS
+    // =========================================================================
+    function populateProfileSelects() {
+      const learners = Object.values(appState.learners);
+      ['learnerSelectDesktop', 'learnerSelectMobile'].forEach(id => {
+        const sel = document.getElementById(id);
+        sel.innerHTML = learners.map(l =>
+          `<option value="${l.id}" ${l.id === appState.activeLearnerId ? 'selected' : ''}>${l.name} — ${l.level}</option>`
+        ).join('');
+      });
+    }
+
+    function updateHeaderAndSidebar() {
+      const learner = getActiveLearner();
+      document.getElementById('streakCount').textContent = `${learner.streak} jours`;
+      document.getElementById('xpCount').textContent = `${learner.xp.toLocaleString('fr-FR')} XP`;
+      document.getElementById('sidebarProfileMeta').innerHTML = `
+        <span>${learner.specialty}</span>
+        <span class="font-mono font-medium text-[var(--foreground)]">${learner.completedLessons.length}/${getAllLessons().length} leçons</span>
+      `;
+      const pct = Math.min(100, Math.round((learner.todayMinutes / learner.dailyGoalMin) * 100));
+      document.getElementById('dailyGoalText').textContent = `${learner.todayMinutes}/${learner.dailyGoalMin} min`;
+      document.getElementById('dailyGoalBar').style.width = `${pct}%`;
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const active = btn.dataset.view === currentView;
+        btn.classList.toggle('nav-active', active);
+        btn.classList.toggle('nav-idle', !active);
+      });
+
+      const titles = {
+        dashboard: ['Tableau de bord', `Bonjour ${learner.name} — suivi de votre pratique et objectifs metal`],
+        catalog: ['Catégories & Catalogue', 'Explorez les parcours interactifs par style, technique et accordage'],
+        player: ['Cours Interactif', 'Leçon vidéo, tablature synchronisée, manche et métronome Web Audio'],
+        progress: ['Suivi & Progression', 'Records BPM, maîtrise technique, jalons et régularité']
+      };
+      document.getElementById('pageTitle').textContent = titles[currentView][0];
+      document.getElementById('pageSubtitle').textContent = titles[currentView][1];
+    }
+
+    function switchView(viewName) {
+      stopTabPlayback();
+      stopVideoPlayback();
+      currentView = viewName;
+      ['dashboard', 'catalog', 'player', 'progress'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.toggle('hidden', v !== viewName);
+      });
+      updateHeaderAndSidebar();
+      if (viewName === 'dashboard') renderDashboard();
+      if (viewName === 'catalog') renderCatalog();
+      if (viewName === 'player') renderPlayer();
+      if (viewName === 'progress') renderProgress();
+    }
+
+    function openLesson(lessonId) {
+      currentLessonId = lessonId;
+      getActiveLearner().lastLessonId = lessonId;
+      saveState();
+      switchView('player');
+    }
+
+    // =========================================================================
+    // 5. VUE 1 : TABLEAU DE BORD APPRENANT
+    // =========================================================================
+    function renderDashboard() {
+      const learner = getActiveLearner();
+      const totalLessons = getAllLessons().length;
+      const completedCount = learner.completedLessons.length;
+      const completionPct = Math.round((completedCount / totalLessons) * 100);
+      const maxBpm = Math.max(...Object.values(learner.bpmRecords), 0);
+      const weeklyTotal = learner.weeklyMinutes.reduce((a, b) => a + b, 0);
+
+      // KPIs
+      const kpis = [
+        { label: 'Progression Globale', value: `${completionPct}%`, sub: `${completedCount} sur ${totalLessons} leçons validées` },
+        { label: 'Record de Vélocité', value: `${maxBpm} BPM`, sub: 'Meilleur tempo propre enregistré' },
+        { label: 'Pratique Hebdomadaire', value: `${weeklyTotal} min`, sub: `Objectif : ${learner.dailyGoalMin} min / jour` },
+        { label: 'Niveau & Expérience', value: learner.level, sub: `${learner.xp.toLocaleString('fr-FR')} XP accumulés` }
+      ];
+      document.getElementById('dashboardKpis').innerHTML = kpis.map(k => `
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+          <div class="text-xs text-[var(--muted-foreground)]">${k.label}</div>
+          <div class="text-xl font-bold mt-1 tabular-nums">${k.value}</div>
+          <div class="text-xs text-[var(--muted-foreground)] mt-1">${k.sub}</div>
+        </div>
+      `).join('');
+
+      // Cours en cours
+      const activeCoursesHtml = COURSES.slice(0, 4).map(course => {
+        const done = course.lessons.filter(l => learner.completedLessons.includes(l.id)).length;
+        const pct = Math.round((done / course.lessons.length) * 100);
+        const nextLesson = course.lessons.find(l => !learner.completedLessons.includes(l.id)) || course.lessons[0];
+        return `
+          <div class="p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 text-xs">
+                <span class="px-2 py-0.5 rounded bg-[var(--content)] text-[var(--foreground)] font-medium">${course.categoryLabel}</span>
+                <span class="text-[var(--muted-foreground)] font-mono">${course.tuning}</span>
+              </div>
+              <div class="text-sm font-semibold truncate">${course.title}</div>
+              <div class="flex items-center gap-2.5">
+                <div class="flex-1 max-w-xs h-1.5 rounded-full bg-[var(--content)] overflow-hidden">
+                  <div class="h-full bg-[var(--primary)]" style="width: ${pct}%"></div>
+                </div>
+                <span class="text-xs font-mono text-[var(--muted-foreground)] tabular-nums">${done}/${course.lessons.length}</span>
+              </div>
+            </div>
+            <button onclick="openLesson('${nextLesson.id}')" class="shrink-0 px-3 py-1.5 rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium hover:opacity-90 transition-opacity">
+              ${done === course.lessons.length ? 'Revoir' : 'Continuer'}
+            </button>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('activeCoursesList').innerHTML = activeCoursesHtml;
+
+      // Graphique hebdomadaire SVG
+      document.getElementById('chartGoalLabel').textContent = learner.dailyGoalMin;
+      document.getElementById('weeklyTotalMinutes').textContent = `${weeklyTotal} min`;
+      const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+      const maxVal = Math.max(...learner.weeklyMinutes, learner.dailyGoalMin, 60);
+      const goalY = 120 - Math.round((learner.dailyGoalMin / maxVal) * 105);
+      const barsSvg = learner.weeklyMinutes.map((val, i) => {
+        const h = Math.max(6, Math.round((val / maxVal) * 105));
+        const x = 14 + i * 42;
+        const y = 120 - h;
+        const reached = val >= learner.dailyGoalMin;
+        return `
+          <g>
+            <rect x="${x}" y="${y}" width="24" height="${h}" rx="4" fill="${reached ? 'var(--primary)' : 'var(--chart-2)'}" opacity="${reached ? '1' : '0.75'}"></rect>
+            <text x="${x + 12}" y="${y - 5}" text-anchor="middle" fill="var(--muted-foreground)" font-size="10" font-family="monospace">${val}</text>
+            <text x="${x + 12}" y="138" text-anchor="middle" fill="var(--muted-foreground)" font-size="11">${days[i]}</text>
+          </g>
+        `;
+      }).join('');
+      document.getElementById('weeklyChartContainer').innerHTML = `
+        <svg viewBox="0 0 310 148" class="w-full h-full overflow-visible">
+          <line x1="6" y1="${goalY}" x2="304" y2="${goalY}" stroke="var(--border)" stroke-dasharray="4 3" stroke-width="1.2" />
+          ${barsSvg}
+        </svg>
+      `;
+
+      // Compétences techniques
+      document.getElementById('dashboardSkillsList').innerHTML = learner.skills.map(sk => `
+        <div class="space-y-1">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-medium">${sk.name}</span>
+            <span class="font-mono tabular-nums text-[var(--muted-foreground)]">${sk.score}%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-[var(--content)] overflow-hidden">
+            <div class="h-full rounded-full bg-[var(--primary)]" style="width: ${sk.score}%"></div>
+          </div>
+        </div>
+      `).join('');
+
+      // Leçons vidéo recommandées
+      const recs = getAllLessons()
+        .filter(item => !learner.completedLessons.includes(item.lesson.id))
+        .slice(0, 4);
+      const listToRender = recs.length ? recs : getAllLessons().slice(0, 4);
+      document.getElementById('recommendedLessonsList').innerHTML = listToRender.map(({ course, lesson }) => `
+        <div class="p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-lg bg-[var(--content)] border border-[var(--border)] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-[var(--primary)]" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-semibold truncate">${lesson.title}</div>
+              <div class="text-xs text-[var(--muted-foreground)] truncate">${course.categoryLabel} • ${formatTime(lesson.durationSec)} • Cible ${lesson.targetBpm} BPM</div>
+            </div>
+          </div>
+          <button onclick="openLesson('${lesson.id}')" class="shrink-0 px-2.5 py-1.5 rounded-md bg-[var(--content)] hover:bg-[var(--border)] text-xs font-medium transition-colors">
+            Ouvrir
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 6. VUE 2 : CATÉGORIES & CATALOGUE
+    // =========================================================================
+    function renderCatalog() {
+      const learner = getActiveLearner();
+      // Onglets catégories
+      document.getElementById('categoryTabs').innerHTML = CATEGORIES.map(cat => {
+        const isActive = cat.id === activeCategory;
+        return `
+          <button onclick="setCategory('${cat.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isActive ? 'bg-[var(--primary)] text-[var(--primary-foreground)] border-transparent' : 'bg-[var(--card)] text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--content)]'}">
+            ${cat.label}
+          </button>
+        `;
+      }).join('');
+
+      const q = document.getElementById('catalogSearch').value.trim().toLowerCase();
+      const diff = document.getElementById('filterDifficulty').value;
+      const tuning = document.getElementById('filterTuning').value;
+
+      const filtered = COURSES.filter(c => {
+        if (activeCategory !== 'all' && c.category !== activeCategory) return false;
+        if (diff !== 'all' && c.difficulty !== diff) return false;
+        if (tuning !== 'all' && c.tuning !== tuning) return false;
+        if (q && !(c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.categoryLabel.toLowerCase().includes(q) || c.tuning.toLowerCase().includes(q))) return false;
+        return true;
+      });
+
+      document.getElementById('catalogCount').textContent = `${filtered.length} cours`;
+
+      if (!filtered.length) {
+        document.getElementById('catalogGrid').innerHTML = `
+          <div class="col-span-full bg-[var(--card)] border border-[var(--border)] rounded-xl p-8 text-center text-xs text-[var(--muted-foreground)]">
+            Aucun cours ne correspond à vos critères actuels. Essayez de réinitialiser les filtres.
+          </div>
+        `;
+        return;
+      }
+
+      document.getElementById('catalogGrid').innerHTML = filtered.map(course => {
+        const done = course.lessons.filter(l => learner.completedLessons.includes(l.id)).length;
+        const pct = Math.round((done / course.lessons.length) * 100);
+        const firstLesson = course.lessons[0];
+        return `
+          <article class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="px-2 py-0.5 rounded bg-[var(--content)] font-medium">${course.categoryLabel}</span>
+                <span class="font-mono text-[var(--muted-foreground)]">${course.tuning}</span>
+              </div>
+              <h3 class="text-sm font-bold leading-snug">${course.title}</h3>
+              <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">${course.description}</p>
+            </div>
+            <div class="space-y-3 pt-2 border-t border-[var(--border)]">
+              <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
+                <span>${course.difficulty} • ${course.duration}</span>
+                <span class="font-mono tabular-nums">${course.lessons.length} leçon${course.lessons.length > 1 ? 's' : ''}</span>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs">
+                  <span class="text-[var(--muted-foreground)]">Progression</span>
+                  <span class="font-mono tabular-nums">${pct}%</span>
+                </div>
+                <div class="w-full h-1.5 rounded-full bg-[var(--content)] overflow-hidden">
+                  <div class="h-full bg-[var(--primary)]" style="width: ${pct}%"></div>
+                </div>
+              </div>
+              <button onclick="openLesson('${firstLesson.id}')" class="w-full py-2 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium hover:opacity-90 transition-opacity">
+                ${done > 0 ? 'Poursuivre le cours' : 'Démarrer le cours'}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    window.setCategory = function(catId) {
+      activeCategory = catId;
+      renderCatalog();
+    };
+
+    // =========================================================================
+    // 7. VUE 3 : COURS INTERACTIF, EMPLACEMENT VIDÉO & TABLATURE
+    // =========================================================================
+    function renderPlayer() {
+      const learner = getActiveLearner();
+      const { course, lesson } = findLessonContext(currentLessonId);
+
+      // Réinitialiser lecteur vidéo natif si on change de leçon
+      const nativeVid = document.getElementById('nativeVideoElement');
+      nativeVid.pause();
+      nativeVid.classList.add('hidden');
+      document.getElementById('videoSlotPlaceholder').classList.remove('hidden');
+      videoCurrentSec = 0;
+      updateVideoTimeUI(lesson);
+
+      // En-tête de la leçon
+      document.getElementById('playerCourseBadge').textContent = course.title;
+      document.getElementById('playerTuningBadge').textContent = course.tuning;
+      document.getElementById('playerLessonTitle').textContent = lesson.title;
+      document.getElementById('videoSlotCaption').textContent = lesson.videoCaption;
+
+      // Bouton marquer comme terminée
+      const isDone = learner.completedLessons.includes(lesson.id);
+      const completeBtn = document.getElementById('toggleCompleteLessonBtn');
+      completeBtn.textContent = isDone ? 'Leçon validée ✓' : 'Valider la leçon';
+      completeBtn.className = isDone
+        ? 'px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--success)] text-[var(--primary-foreground)] transition-colors'
+        : 'px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity';
+
+      // Chapitres vidéo
+      document.getElementById('videoChaptersList').innerHTML = lesson.chapters.map(ch => `
+        <button onclick="jumpVideoChapter(${ch.pct})" class="px-2.5 py-1 rounded-md bg-[var(--background)] border border-[var(--border)] hover:bg-[var(--content)] text-xs transition-colors">
+          ${ch.label}
+        </button>
+      `).join('');
+
+      // Tempo & BPM
+      const savedBpm = learner.bpmRecords[lesson.id] || lesson.defaultBpm;
+      const bpmSlider = document.getElementById('bpmSlider');
+      bpmSlider.value = savedBpm;
+      document.getElementById('bpmReadout').textContent = `${savedBpm} BPM`;
+      document.getElementById('targetBpmReadout').textContent = `${lesson.targetBpm} BPM`;
+
+      // Rendu Tablature & Manche
+      renderTablature(lesson, course.tuning);
+      renderFretboard(lesson, null);
+
+      // Programme du cours (colonne droite)
+      const doneInCourse = course.lessons.filter(l => learner.completedLessons.includes(l.id)).length;
+      const coursePct = Math.round((doneInCourse / course.lessons.length) * 100);
+      document.getElementById('courseProgressText').textContent = `${doneInCourse}/${course.lessons.length}`;
+      document.getElementById('courseProgressBar').style.width = `${coursePct}%`;
+      document.getElementById('courseLessonsList').innerHTML = course.lessons.map((l, idx) => {
+        const active = l.id === lesson.id;
+        const done = learner.completedLessons.includes(l.id);
+        return `
+          <button onclick="openLesson('${l.id}')" class="w-full text-left p-2.5 rounded-lg border text-xs flex items-center justify-between gap-2 transition-colors ${active ? 'bg-[var(--content)] border-[var(--primary)] font-semibold' : 'bg-[var(--background)] border-[var(--border)] hover:bg-[var(--content)]'}">
+            <div class="truncate">
+              <span class="font-mono text-[var(--muted-foreground)] mr-1.5">${idx + 1}.</span>
+              <span>${l.title}</span>
+            </div>
+            <span class="shrink-0 font-mono ${done ? 'text-[var(--success)]' : 'text-[var(--muted-foreground)]'}">${done ? '✓' : formatTime(l.durationSec)}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Checklist de maîtrise
+      const savedChecks = learner.checklistState[lesson.id] || [];
+      document.getElementById('lessonChecklist').innerHTML = lesson.checklist.map((item, idx) => {
+        const checked = !!savedChecks[idx];
+        return `
+          <label class="flex items-start gap-2.5 text-xs cursor-pointer p-2 rounded-lg bg-[var(--background)] border border-[var(--border)]">
+            <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleChecklistItem('${lesson.id}', ${idx}, this.checked)" class="mt-0.5 accent-[var(--primary)]" />
+            <span class="${checked ? 'line-through text-[var(--muted-foreground)]' : ''}">${item}</span>
+          </label>
+        `;
+      }).join('');
+
+      // Fiche technique
+      document.getElementById('lessonTechSpecs').innerHTML = Object.entries(lesson.techSpecs).map(([k, v]) => `
+        <div class="flex justify-between gap-3 py-1.5 border-b border-[var(--border)] last:border-b-0">
+          <span class="text-[var(--muted-foreground)]">${k}</span>
+          <span class="font-medium text-right">${v}</span>
+        </div>
+      `).join('');
+
+      // Quiz
+      document.getElementById('quizQuestion').textContent = lesson.quiz.question;
+      document.getElementById('quizFeedback').classList.add('hidden');
+      document.getElementById('quizOptions').innerHTML = lesson.quiz.options.map((opt, idx) => `
+        <button onclick="answerQuiz(${idx})" class="quiz-opt-btn w-full text-left px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--content)] text-xs transition-colors">
+          ${opt}
+        </button>
+      `).join('');
+
+      // Carnet de notes
+      document.getElementById('lessonNotesInput').value = learner.notes[lesson.id] || '';
+    }
+
+    function renderTablature(lesson, tuningStr) {
+      const steps = lesson.tabSteps;
+      let html = '';
+      // Ligne PM (Palm Mute)
+      html += `<div class="grid gap-1 mb-1 items-center" style="grid-template-columns: 32px repeat(${steps.length}, minmax(28px, 1fr));">`;
+      html += `<div class="text-[var(--muted-foreground)] text-center">PM</div>`;
+      steps.forEach((st, i) => {
+        html += `<div class="text-center text-[11px] text-[var(--muted-foreground)]">${st.pm ? '•' : ''}</div>`;
+      });
+      html += `</div>`;
+
+      // 6 cordes
+      for (let s = 0; s < 6; s++) {
+        html += `<div class="grid gap-1 items-center py-0.5 border-b border-[var(--border)] last:border-b-0" style="grid-template-columns: 32px repeat(${steps.length}, minmax(28px, 1fr));">`;
+        html += `<div class="font-bold text-center text-[var(--muted-foreground)]">${lesson.tuningNotes[s]}|</div>`;
+        steps.forEach((st, idx) => {
+          const isNote = st.s === s;
+          if (isNote) {
+            html += `<button data-step="${idx}" onclick="previewTabNote(${idx})" class="tab-cell h-6 rounded flex items-center justify-center font-bold bg-[var(--content)] hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition-colors">${st.f}</button>`;
+          } else {
+            html += `<div data-col="${idx}" class="h-6 flex items-center justify-center text-[var(--border)]">—</div>`;
+          }
+        });
+        html += `</div>`;
+      }
+      document.getElementById('tablatureGrid').innerHTML = html;
+    }
+
+    function renderFretboard(lesson, activeStep) {
+      const frets = 13; // 0 à 12
+      const inlays = [3, 5, 7, 9, 12];
+      let html = `<div class="min-w-[560px]">`;
+      // Numéros de frettes
+      html += `<div class="grid mb-1 text-[11px] font-mono text-[var(--muted-foreground)]" style="grid-template-columns: 28px repeat(${frets}, 1fr);">`;
+      html += `<div></div>`;
+      for (let f = 0; f < frets; f++) {
+        html += `<div class="text-center">${f === 0 ? 'O' : f}</div>`;
+      }
+      html += `</div>`;
+
+      // Cordes du manche
+      for (let s = 0; s < 6; s++) {
+        html += `<div class="grid items-center" style="grid-template-columns: 28px repeat(${frets}, 1fr);">`;
+        html += `<div class="text-xs font-mono font-bold text-[var(--muted-foreground)] text-center">${lesson.tuningNotes[s]}</div>`;
+        for (let f = 0; f < frets; f++) {
+          const isActive = activeStep && activeStep.s === s && activeStep.f === f;
+          const isNut = f === 0;
+          html += `
+            <div class="relative h-6 flex items-center justify-center ${isNut ? 'border-r-2 border-[var(--foreground)]' : 'border-r border-[var(--border)]'}">
+              <div class="w-full h-[1px] bg-[var(--border)] absolute"></div>
+              ${isActive ? `<span class="fret-dot relative z-10 w-5 h-5 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] text-[11px] font-mono font-bold flex items-center justify-center">${f}</span>` : ''}
+            </div>
+          `;
+        }
+        html += `</div>`;
+      }
+      // Repères de manche
+      html += `<div class="grid mt-1" style="grid-template-columns: 28px repeat(${frets}, 1fr);"><div></div>`;
+      for (let f = 0; f < frets; f++) {
+        html += `<div class="flex justify-center">${inlays.includes(f) ? `<span class="w-1.5 h-1.5 rounded-full bg-[var(--muted-foreground)] opacity-50"></span>` : ''}</div>`;
+      }
+      html += `</div></div>`;
+      document.getElementById('fretboardContainer').innerHTML = html;
+    }
+
+    window.previewTabNote = function(stepIdx) {
+      const { course, lesson } = findLessonContext(currentLessonId);
+      const st = lesson.tabSteps[stepIdx];
+      if (!st) return;
+      playGuitarNote(st.s, st.f, !!st.pm, course.tuning);
+      highlightStep(stepIdx, lesson);
+    };
+
+    function highlightStep(stepIdx, lesson) {
+      document.querySelectorAll('.tab-cell').forEach(el => {
+        el.classList.toggle('step-active', Number(el.dataset.step) === stepIdx);
+      });
+      const st = lesson.tabSteps[stepIdx];
+      renderFretboard(lesson, st);
+      if (st) {
+        document.getElementById('activeNoteLabel').textContent =
+          `Corde ${lesson.tuningNotes[st.s]} • Frette ${st.f}${st.pm ? ' (Palm Mute)' : ''}`;
+      }
+    }
+
+    function startTabPlayback() {
+      const { course, lesson } = findLessonContext(currentLessonId);
+      ensureAudioCtx();
+      tabPlaying = true;
+      const btn = document.getElementById('tabPlayBtn');
+      btn.querySelector('span').textContent = 'Arrêter';
+      currentStepIdx = -1;
+
+      const scheduleNext = () => {
+        if (!tabPlaying) return;
+        const bpm = Number(document.getElementById('bpmSlider').value);
+        // Doubles-croches (4 pas par temps)
+        const stepMs = (60000 / bpm) / 4;
+        currentStepIdx = (currentStepIdx + 1) % lesson.tabSteps.length;
+        const st = lesson.tabSteps[currentStepIdx];
+        if (metronomeEnabled && currentStepIdx % 4 === 0) {
+          playMetronomeClick(currentStepIdx === 0);
+        }
+        playGuitarNote(st.s, st.f, !!st.pm, course.tuning);
+        highlightStep(currentStepIdx, lesson);
+        tabTimer = setTimeout(scheduleNext, stepMs);
+      };
+      scheduleNext();
+    }
+
+    function stopTabPlayback() {
+      tabPlaying = false;
+      clearTimeout(tabTimer);
+      const btn = document.getElementById('tabPlayBtn');
+      if (btn) btn.querySelector('span').textContent = 'Jouer le riff';
+      document.querySelectorAll('.tab-cell').forEach(el => el.classList.remove('step-active'));
+    }
+
+    // Contrôles de l'emplacement vidéo
+    function updateVideoTimeUI(lesson) {
+      document.getElementById('videoDurationLabel').textContent =
+        `${formatTime(videoCurrentSec)} / ${formatTime(lesson.durationSec)}`;
+      const pct = Math.min(100, Math.round((videoCurrentSec / lesson.durationSec) * 100));
+      document.getElementById('videoScrubber').value = pct;
+    }
+
+    function stopVideoPlayback() {
+      videoPlaying = false;
+      clearInterval(videoTimer);
+      const icon = document.getElementById('videoPlayIcon');
+      if (icon) icon.innerHTML = '<polygon points="6 4 20 12 6 20 6 4"/>';
+    }
+
+    function toggleVideoPlayback() {
+      const { lesson } = findLessonContext(currentLessonId);
+      if (videoPlaying) {
+        stopVideoPlayback();
+      } else {
+        videoPlaying = true;
+        document.getElementById('videoPlayIcon').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+        videoTimer = setInterval(() => {
+          videoCurrentSec += videoSpeed;
+          if (videoCurrentSec >= lesson.durationSec) {
+            videoCurrentSec = 0;
+            stopVideoPlayback();
+          }
+          updateVideoTimeUI(lesson);
+        }, 1000);
+      }
+    }
+
+    window.jumpVideoChapter = function(pct) {
+      const { lesson } = findLessonContext(currentLessonId);
+      videoCurrentSec = Math.round((pct / 100) * lesson.durationSec);
+      updateVideoTimeUI(lesson);
+      showToast(`Chapitre atteint (${formatTime(videoCurrentSec)})`);
+    };
+
+    window.toggleChecklistItem = function(lessonId, idx, checked) {
+      const learner = getActiveLearner();
+      if (!learner.checklistState[lessonId]) learner.checklistState[lessonId] = [];
+      learner.checklistState[lessonId][idx] = checked;
+      saveState();
+      renderPlayer();
+    };
+
+    window.answerQuiz = function(choiceIdx) {
+      const { lesson } = findLessonContext(currentLessonId);
+      const fb = document.getElementById('quizFeedback');
+      const isCorrect = choiceIdx === lesson.quiz.correctIndex;
+      fb.classList.remove('hidden');
+      fb.className = isCorrect
+        ? 'text-xs rounded-md p-2.5 bg-[var(--content)] border border-[var(--success)] text-[var(--foreground)]'
+        : 'text-xs rounded-md p-2.5 bg-[var(--content)] border border-[var(--error)] text-[var(--foreground)]';
+      fb.innerHTML = `<strong>${isCorrect ? 'Exact !' : 'À revoir :'}</strong> ${lesson.quiz.explanation}`;
+    };
+
+    // =========================================================================
+    // 8. VUE 4 : SUIVI DE LA PROGRESSION
+    // =========================================================================
+    function renderProgress() {
+      const learner = getActiveLearner();
+      const allLessons = getAllLessons();
+      const avgBpmPct = Math.round(
+        allLessons.reduce((acc, { lesson }) => {
+          const cur = learner.bpmRecords[lesson.id] || lesson.defaultBpm;
+          return acc + Math.min(100, (cur / lesson.targetBpm) * 100);
+        }, 0) / allLessons.length
+      );
+      const unlockedCount = BADGES.filter(b => b.condition(learner)).length;
+
+      document.getElementById('progressSummaryCards').innerHTML = [
+        { label: 'Atteinte moyenne des tempos cibles', value: `${avgBpmPct}%`, sub: 'Sur l’ensemble des riffs du programme' },
+        { label: 'Leçons validées', value: `${learner.completedLessons.length} / ${allLessons.length}`, sub: 'Mises à jour instantanément' },
+        { label: 'Succès débloqués', value: `${unlockedCount} / ${BADGES.length}`, sub: 'Jalons de vélocité et régularité' }
+      ].map(c => `
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+          <div class="text-xs text-[var(--muted-foreground)]">${c.label}</div>
+          <div class="text-xl font-bold mt-1 tabular-nums">${c.value}</div>
+          <div class="text-xs text-[var(--muted-foreground)] mt-1">${c.sub}</div>
+        </div>
+      `).join('');
+
+      // Tableau BPM
+      document.getElementById('bpmTableBody').innerHTML = allLessons.map(({ course, lesson }) => {
+        const cur = learner.bpmRecords[lesson.id] || lesson.defaultBpm;
+        const pct = Math.min(100, Math.round((cur / lesson.targetBpm) * 100));
+        return `
+          <tr>
+            <td class="py-3 pr-4 font-medium">${lesson.title}</td>
+            <td class="py-3 px-3 text-[var(--muted-foreground)]">${course.categoryLabel}</td>
+            <td class="py-3 px-3 font-mono font-semibold tabular-nums">${cur} BPM</td>
+            <td class="py-3 px-3 font-mono text-[var(--muted-foreground)] tabular-nums">${lesson.targetBpm} BPM</td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-2 rounded-full bg-[var(--content)] overflow-hidden">
+                  <div class="h-full rounded-full ${pct >= 100 ? 'bg-[var(--success)]' : 'bg-[var(--primary)]'}" style="width: ${pct}%"></div>
+                </div>
+                <span class="font-mono tabular-nums w-9 text-right">${pct}%</span>
+              </div>
+            </td>
+            <td class="py-3 pl-3 text-right">
+              <button onclick="openLesson('${lesson.id}')" class="px-2.5 py-1 rounded bg-[var(--content)] hover:bg-[var(--border)] font-medium transition-colors">
+                Pratiquer
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Badges
+      document.getElementById('badgesGrid').innerHTML = BADGES.map(b => {
+        const unlocked = b.condition(learner);
+        return `
+          <div class="p-3 rounded-lg border ${unlocked ? 'bg-[var(--background)] border-[var(--primary)]' : 'bg-[var(--content)] border-[var(--border)] opacity-65'}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-semibold">${b.title}</span>
+              <span class="text-[11px] font-mono ${unlocked ? 'text-[var(--success)]' : 'text-[var(--muted-foreground)]'}">${unlocked ? 'Débloqué' : 'Verrouillé'}</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] mt-1">${b.desc}</p>
+          </div>
+        `;
+      }).join('');
+
+      // Grille d'assiduité (28 jours)
+      const activeDays = learner.monthlyGrid.filter(v => v > 0).length;
+      document.getElementById('monthlySessionsCount').textContent = `${activeDays} / 28 jours`;
+      document.getElementById('consistencyGrid').innerHTML = learner.monthlyGrid.map((lvl, idx) => {
+        const opacities = ['opacity-20 bg-[var(--border)]', 'opacity-45 bg-[var(--primary)]', 'opacity-75 bg-[var(--primary)]', 'opacity-100 bg-[var(--primary)]'];
+        return `<div title="Jour ${idx + 1} : ${lvl === 0 ? 'Repos' : lvl * 20 + ' min'}" class="h-7 rounded-md ${opacities[lvl]}"></div>`;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 9. ÉCOUTEURS D'ÉVÉNEMENTS
+    // =========================================================================
+    function bindEvents() {
+      // Navigation principale
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.view));
+      });
+      document.querySelectorAll('[data-goto]').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.goto));
+      });
+
+      // Changement de profil apprenant
+      ['learnerSelectDesktop', 'learnerSelectMobile'].forEach(id => {
+        document.getElementById(id).addEventListener('change', e => {
+          appState.activeLearnerId = e.target.value;
+          currentLessonId = getActiveLearner().lastLessonId || 'thrash-1';
+          saveState();
+          populateProfileSelects();
+          switchView(currentView);
+          showToast(`Profil chargé : ${getActiveLearner().name}`);
+        });
+      });
+
+      // Bouton rapide reprendre
+      document.getElementById('quickResumeBtn').addEventListener('click', () => {
+        openLesson(getActiveLearner().lastLessonId || 'thrash-1');
+      });
+
+      // Ajout rapide de 15 min de pratique
+      document.getElementById('addPracticeBtn').addEventListener('click', () => {
+        const learner = getActiveLearner();
+        learner.todayMinutes += 15;
+        learner.weeklyMinutes[6] += 15;
+        learner.xp += 35;
+        saveState();
+        updateHeaderAndSidebar();
+        if (currentView === 'dashboard') renderDashboard();
+        showToast('+15 min enregistrées (+35 XP)');
+      });
+
+      // Filtres catalogue
+      ['catalogSearch', 'filterDifficulty', 'filterTuning'].forEach(id => {
+        document.getElementById(id).addEventListener('input', renderCatalog);
+      });
+
+      // Contrôles vidéo
+      document.getElementById('videoPlayBtn').addEventListener('click', toggleVideoPlayback);
+      document.getElementById('videoScrubber').addEventListener('input', e => {
+        const { lesson } = findLessonContext(currentLessonId);
+        videoCurrentSec = Math.round((Number(e.target.value) / 100) * lesson.durationSec);
+        updateVideoTimeUI(lesson);
+      });
+      document.querySelectorAll('.angle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.angle-btn').forEach(b => {
+            b.className = 'angle-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)]';
+          });
+          btn.className = 'angle-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--primary)] text-[var(--primary-foreground)]';
+          document.getElementById('videoCameraLabel').textContent = `Caméra : ${btn.dataset.angle}`;
+        });
+      });
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          videoSpeed = Number(btn.dataset.speed);
+          document.getElementById('videoSpeedBadge').textContent = `${videoSpeed.toFixed(videoSpeed % 1 === 0 ? 1 : 2)}x`;
+          document.querySelectorAll('.speed-btn').forEach(b => {
+            b.className = 'speed-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--background)]';
+          });
+          btn.className = 'speed-btn px-2 py-1 rounded border border-[var(--border)] bg-[var(--primary)] text-[var(--primary-foreground)]';
+        });
+      });
+
+      // Import de fichier vidéo local dans l'emplacement
+      document.getElementById('localVideoInput').addEventListener('change', e => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        stopVideoPlayback();
+        const url = URL.createObjectURL(file);
+        const vid = document.getElementById('nativeVideoElement');
+        vid.src = url;
+        vid.classList.remove('hidden');
+        document.getElementById('videoSlotPlaceholder').classList.add('hidden');
+        showToast(`Vidéo chargée : ${file.name}`);
+      });
+
+      // Valider / Dévalider la leçon
+      document.getElementById('toggleCompleteLessonBtn').addEventListener('click', () => {
+        const learner = getActiveLearner();
+        const idx = learner.completedLessons.indexOf(currentLessonId);
+        if (idx === -1) {
+          learner.completedLessons.push(currentLessonId);
+          learner.xp += 120;
+          showToast('Leçon validée ! +120 XP');
+        } else {
+          learner.completedLessons.splice(idx, 1);
+          showToast('Statut de la leçon réinitialisé');
+        }
+        saveState();
+        updateHeaderAndSidebar();
+        renderPlayer();
+      });
+
+      // Contrôles Tablature & BPM
+      document.getElementById('tabPlayBtn').addEventListener('click', () => {
+        if (tabPlaying) stopTabPlayback();
+        else startTabPlayback();
+      });
+      document.getElementById('metronomeToggleBtn').addEventListener('click', e => {
+        metronomeEnabled = !metronomeEnabled;
+        e.target.textContent = `Métronome : ${metronomeEnabled ? 'ON' : 'OFF'}`;
+      });
+      document.getElementById('bpmSlider').addEventListener('input', e => {
+        document.getElementById('bpmReadout').textContent = `${e.target.value} BPM`;
+      });
+      document.getElementById('bpmBoostBtn').addEventListener('click', () => {
+        const slider = document.getElementById('bpmSlider');
+        const nextVal = Math.min(220, Number(slider.value) + 5);
+        slider.value = nextVal;
+        document.getElementById('bpmReadout').textContent = `${nextVal} BPM`;
+      });
+      document.getElementById('saveBpmRecordBtn').addEventListener('click', () => {
+        const learner = getActiveLearner();
+        const bpm = Number(document.getElementById('bpmSlider').value);
+        learner.bpmRecords[currentLessonId] = bpm;
+        learner.xp += 25;
+        saveState();
+        updateHeaderAndSidebar();
+        showToast(`Record enregistré : ${bpm} BPM (+25 XP)`);
+      });
+
+      // Notes personnelles
+      document.getElementById('saveNotesBtn').addEventListener('click', () => {
+        const learner = getActiveLearner();
+        learner.notes[currentLessonId] = document.getElementById('lessonNotesInput').value;
+        saveState();
+        document.getElementById('notesSavedStatus').textContent = 'Enregistré à l’instant';
+        showToast('Notes de pratique sauvegardées');
+      });
+    }
+
+    // Initialisation
+    populateProfileSelects();
+    bindEvents();
+    switchView('dashboard');
+  </script>
+</body>
+</html>
