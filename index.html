@@ -297,9 +297,12 @@
                     </div>
                     <h2 id="playerLessonTitle" class="text-sm font-bold mt-0.5"></h2>
                   </div>
-                  <div class="flex items-center gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <button id="customYoutubeBtn" type="button" class="px-2.5 py-1.5 rounded-md bg-[var(--content)] hover:bg-[var(--border)] text-xs font-medium transition-colors" title="Remplacer par une autre URL YouTube">
+                      Changer vidéo YouTube
+                    </button>
                     <label class="cursor-pointer px-2.5 py-1.5 rounded-md bg-[var(--content)] hover:bg-[var(--border)] text-xs font-medium transition-colors" title="Charger un fichier vidéo local dans cet emplacement">
-                      Importer vidéo locale
+                      Vidéo locale
                       <input id="localVideoInput" type="file" accept="video/*" class="hidden" />
                     </label>
                     <button id="toggleCompleteLessonBtn" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"></button>
@@ -307,12 +310,22 @@
                 </div>
 
                 <!-- Zone Emplacement Vidéo 16:9 -->
-                <div class="relative aspect-video bg-[var(--content)] flex flex-col justify-between overflow-hidden">
+                <div class="relative aspect-video bg-black flex flex-col justify-between overflow-hidden">
+                  <!-- Lecteur YouTube intégré -->
+                  <iframe
+                    id="youtubeVideoFrame"
+                    class="hidden w-full h-full border-0 bg-black"
+                    title="Leçon vidéo YouTube"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+
                   <!-- Lecteur natif affiché uniquement si l'utilisateur importe une vidéo -->
                   <video id="nativeVideoElement" class="hidden w-full h-full object-contain bg-black" controls></video>
 
-                  <!-- Emplacement Vidéo Studio Interactif (par défaut) -->
-                  <div id="videoSlotPlaceholder" class="w-full h-full flex flex-col justify-between p-4 sm:p-6">
+                  <!-- Emplacement Vidéo Studio Interactif (fallback si aucune vidéo) -->
+                  <div id="videoSlotPlaceholder" class="w-full h-full flex flex-col justify-between p-4 sm:p-6 bg-[var(--content)]">
                     <!-- En-tête caméra / statut -->
                     <div class="flex items-center justify-between gap-2">
                       <div class="flex items-center gap-2">
@@ -329,7 +342,7 @@
                       </button>
                       <p id="videoSlotCaption" class="mt-3 text-sm font-semibold max-w-md"></p>
                       <p class="mt-1 text-xs text-[var(--muted-foreground)] max-w-md">
-                        Emplacement prêt pour votre flux vidéo (MP4, WebM ou HLS). Utilisez les chapitres ci-dessous ou importez une vidéo locale pour tester.
+                        Emplacement prêt pour votre flux vidéo (YouTube ou fichier local).
                       </p>
                     </div>
 
@@ -358,7 +371,10 @@
 
                 <!-- Chapitres de la leçon vidéo -->
                 <div class="px-4 py-3 border-t border-[var(--border)] bg-[var(--card)]">
-                  <div class="text-xs font-medium text-[var(--muted-foreground)] mb-2">Chapitres de la vidéo</div>
+                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <div class="text-xs font-medium text-[var(--muted-foreground)]">Chapitres &amp; Source vidéo</div>
+                    <a id="youtubeExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden text-xs font-medium text-[var(--link)] hover:underline">Ouvrir sur YouTube ↗</a>
+                  </div>
                   <div id="videoChaptersList" class="flex flex-wrap gap-2"></div>
                 </div>
               </div>
@@ -565,6 +581,7 @@
           {
             id: 'thrash-1',
             title: 'Le Galop Thrash en Mi Mineur',
+            youtubeId: 'xpzsarSxq14',
             durationSec: 520,
             targetBpm: 165,
             defaultBpm: 120,
@@ -609,6 +626,7 @@
           {
             id: 'thrash-2',
             title: 'Endurance Downpicking Chromatique',
+            youtubeId: 'FnmV2eq-mrM',
             durationSec: 465,
             targetBpm: 185,
             defaultBpm: 135,
@@ -664,6 +682,7 @@
           {
             id: 'shred-1',
             title: 'Séquences 3 Notes par Corde en Phrygien',
+            youtubeId: 'kDT7FoET9dM',
             durationSec: 610,
             targetBpm: 160,
             defaultBpm: 105,
@@ -719,6 +738,7 @@
           {
             id: 'sweep-1',
             title: 'Arpège de La Mineur sur 5 Cordes',
+            youtubeId: 'CNUfi2sq0q8',
             durationSec: 540,
             targetBpm: 145,
             defaultBpm: 90,
@@ -774,6 +794,7 @@
           {
             id: 'djent-1',
             title: 'Groove Syncopé 3+3+2 en Drop C',
+            youtubeId: 't9ME67nFULo',
             durationSec: 495,
             targetBpm: 140,
             defaultBpm: 100,
@@ -829,6 +850,7 @@
           {
             id: 'dropd-1',
             title: 'Power Chords à Un Doigt & Groove Lourd',
+            youtubeId: 'k9Oc-nkJgmE',
             durationSec: 410,
             targetBpm: 125,
             defaultBpm: 90,
@@ -884,6 +906,7 @@
           {
             id: 'harm-1',
             title: 'Motif Mélodique en Ré Mineur Harmonique',
+            youtubeId: 'rEwLD_hkSTU',
             durationSec: 480,
             targetBpm: 135,
             defaultBpm: 95,
@@ -1432,16 +1455,75 @@
     // =========================================================================
     // 7. VUE 3 : COURS INTERACTIF, EMPLACEMENT VIDÉO & TABLATURE
     // =========================================================================
+    const CUSTOM_YT_KEY = 'riffforge_custom_yt_v1';
+
+    function loadCustomYoutubeMap() {
+      try {
+        return JSON.parse(localStorage.getItem(CUSTOM_YT_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCustomYoutubeId(lessonId, ytId) {
+      const map = loadCustomYoutubeMap();
+      map[lessonId] = ytId;
+      try {
+        localStorage.setItem(CUSTOM_YT_KEY, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function extractYoutubeId(input) {
+      if (!input) return null;
+      const trimmed = input.trim();
+      if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+      const m = trimmed.match(/(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+
+    function getLessonYoutubeId(lesson) {
+      const custom = loadCustomYoutubeMap();
+      return custom[lesson.id] || lesson.youtubeId || null;
+    }
+
+    function loadYoutubeEmbed(ytId, startSec = 0, autoplay = false) {
+      const frame = document.getElementById('youtubeVideoFrame');
+      const placeholder = document.getElementById('videoSlotPlaceholder');
+      const nativeVid = document.getElementById('nativeVideoElement');
+      const extLink = document.getElementById('youtubeExternalLink');
+
+      nativeVid.pause();
+      nativeVid.classList.add('hidden');
+
+      if (ytId) {
+        const params = new URLSearchParams({
+          rel: '0',
+          modestbranding: '1'
+        });
+        if (startSec > 0) params.set('start', String(startSec));
+        if (autoplay) params.set('autoplay', '1');
+        frame.src = `https://www.youtube-nocookie.com/embed/${ytId}?${params.toString()}`;
+        frame.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        if (extLink) {
+          extLink.href = `https://www.youtube.com/watch?v=${ytId}${startSec > 0 ? `&t=${startSec}s` : ''}`;
+          extLink.classList.remove('hidden');
+        }
+      } else {
+        frame.src = '';
+        frame.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+        if (extLink) extLink.classList.add('hidden');
+      }
+    }
+
     function renderPlayer() {
       const learner = getActiveLearner();
       const { course, lesson } = findLessonContext(currentLessonId);
 
-      // Réinitialiser lecteur vidéo natif si on change de leçon
-      const nativeVid = document.getElementById('nativeVideoElement');
-      nativeVid.pause();
-      nativeVid.classList.add('hidden');
-      document.getElementById('videoSlotPlaceholder').classList.remove('hidden');
+      // Charger la vidéo YouTube associée à la leçon
       videoCurrentSec = 0;
+      loadYoutubeEmbed(getLessonYoutubeId(lesson), 0, false);
       updateVideoTimeUI(lesson);
 
       // En-tête de la leçon
@@ -1682,6 +1764,15 @@
     window.jumpVideoChapter = function(pct) {
       const { lesson } = findLessonContext(currentLessonId);
       videoCurrentSec = Math.round((pct / 100) * lesson.durationSec);
+      const ytFrame = document.getElementById('youtubeVideoFrame');
+      const nativeVid = document.getElementById('nativeVideoElement');
+      if (ytFrame && !ytFrame.classList.contains('hidden')) {
+        const ytId = getLessonYoutubeId(lesson);
+        if (ytId) loadYoutubeEmbed(ytId, videoCurrentSec, true);
+      } else if (nativeVid && !nativeVid.classList.contains('hidden') && nativeVid.duration) {
+        nativeVid.currentTime = (pct / 100) * nativeVid.duration;
+        nativeVid.play().catch(() => {});
+      }
       updateVideoTimeUI(lesson);
       showToast(`Chapitre atteint (${formatTime(videoCurrentSec)})`);
     };
@@ -1860,11 +1951,33 @@
         if (!file) return;
         stopVideoPlayback();
         const url = URL.createObjectURL(file);
+        const ytFrame = document.getElementById('youtubeVideoFrame');
+        ytFrame.src = '';
+        ytFrame.classList.add('hidden');
         const vid = document.getElementById('nativeVideoElement');
         vid.src = url;
         vid.classList.remove('hidden');
         document.getElementById('videoSlotPlaceholder').classList.add('hidden');
-        showToast(`Vidéo chargée : ${file.name}`);
+        showToast(`Vidéo locale chargée : ${file.name}`);
+      });
+
+      // Remplacer la vidéo YouTube d'une leçon par un lien personnalisé
+      document.getElementById('customYoutubeBtn')?.addEventListener('click', () => {
+        const { lesson } = findLessonContext(currentLessonId);
+        const currentId = getLessonYoutubeId(lesson) || '';
+        const input = window.prompt(
+          `Collez une URL ou un identifiant YouTube pour « ${lesson.title} » :`,
+          currentId ? `https://www.youtube.com/watch?v=${currentId}` : ''
+        );
+        if (input === null) return;
+        const parsedId = extractYoutubeId(input);
+        if (!parsedId) {
+          showToast('Lien YouTube non reconnu');
+          return;
+        }
+        saveCustomYoutubeId(lesson.id, parsedId);
+        loadYoutubeEmbed(parsedId, 0, true);
+        showToast('Vidéo YouTube mise à jour !');
       });
 
       // Valider / Dévalider la leçon
