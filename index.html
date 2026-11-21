@@ -501,6 +501,10 @@
                 <h2 class="text-sm font-semibold">Progression de vélocité (Records BPM)</h2>
                 <p class="text-xs text-[var(--muted-foreground)]">Comparez votre tempo maîtrisé actuel au tempo cible de chaque riff</p>
               </div>
+              <div class="flex items-center gap-2">
+                <select id="progressCategoryFilter" aria-label="Filtrer les exercices par catégorie" class="text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-[var(--foreground)]"></select>
+                <span id="progressTableCount" class="text-xs font-mono text-[var(--muted-foreground)] tabular-nums">0 exercices</span>
+              </div>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse text-xs">
@@ -709,6 +713,92 @@
               'Gain / Ampli': 'Distorsion incisive, aigus présents',
               'Technique clé': 'Tremolo picking continu en 16e'
             }
+          },
+          {
+            id: 'thrash-4',
+            title: 'Riffs Thrash Classiques & Downpicking (Style Metallica)',
+            youtubeId: 'kHpY1w_vKgk',
+            durationSec: 535,
+            targetBpm: 195,
+            defaultBpm: 140,
+            videoCaption: 'Alterner cordes à vide étouffées et power chords tranchants avec un downpicking chirurgical.',
+            chapters: [
+              { label: '00:00 — Attaque thrash old-school', pct: 0 },
+              { label: '02:30 — Riff 1 : pédale Mi & quintes', pct: 28 },
+              { label: '05:20 — Riff 2 : chromatismes rapides', pct: 60 },
+              { label: '07:40 — Test d’endurance à 195 BPM', pct: 86 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 4, f: 2, pm: false }, { s: 5, f: 0, pm: true }, { s: 4, f: 3, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 4, pm: false }, { s: 4, f: 3, pm: false }, { s: 4, f: 2, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 2, pm: false }, { s: 5, f: 3, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 2, pm: false }, { s: 5, f: 3, pm: true }, { s: 5, f: 1, pm: false }
+            ],
+            checklist: [
+              'Isoler nettement les notes ouvertes des coups étouffés au chevalet',
+              'Garder le poignet droit souple sur les retours à la corde de Mi à vide',
+              'Couper les résonances indésirables lors des changements de power chords'
+            ],
+            quiz: {
+              question: 'Comment faire ressortir les power chords au milieu d’un riff en palm mute continu ?',
+              options: [
+                'En soulevant brièvement le tranchant de la paume droite uniquement sur les accords accentués',
+                'En baissant le potentiomètre de volume pendant les cordes à vide',
+                'En jouant uniquement avec le pouce'
+              ],
+              correctIndex: 0,
+              explanation: 'Le contraste dynamique entre palm mute serré et relâchement bref crée le mordant typique du thrash metal.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.14–1.38 mm rigide',
+              'Gain / Ampli': 'High-gain serré, basses contrôlées',
+              'Technique clé': 'Downpicking + contrastes Palm Mute'
+            }
+          },
+          {
+            id: 'thrash-5',
+            title: 'Rythmes Galopants Avancés & Triolets',
+            youtubeId: 'hX3pnvseZFI',
+            durationSec: 580,
+            targetBpm: 175,
+            defaultBpm: 120,
+            videoCaption: 'Maîtriser les galops inversés, triolets de croches et changements de cordes rapides à la Iron Maiden / Iced Earth.',
+            chapters: [
+              { label: '00:00 — Galop classique vs galop inversé', pct: 0 },
+              { label: '02:45 — Triolets continus au médiator', pct: 28 },
+              { label: '06:00 — Passage sur cordes A et D', pct: 62 },
+              { label: '08:15 — Séquence complète à 175 BPM', pct: 85 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 5, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 3, pm: false },
+              { s: 4, f: 5, pm: false }, { s: 4, f: 3, pm: false }, { s: 4, f: 2, pm: false }, { s: 5, f: 3, pm: true }
+            ],
+            checklist: [
+              'Différencier clairement le triolet régulier (1-2-3) du galop (croche + 2 doubles)',
+              'Accentuer le premier coup de chaque temps pour stabiliser le groove',
+              'Maintenir la propreté lors des sauts entre corde de Mi et corde de La'
+            ],
+            quiz: {
+              question: 'Quel sens de médiator est recommandé pour un galop inversé (2 doubles + 1 croche) ?',
+              options: [
+                'Bas - Haut - Bas pour conserver l’attaque vers le bas sur chaque temps',
+                'Haut - Haut - Haut uniquement',
+                'Bas - Bas - Bas à toutes les vitesses'
+              ],
+              correctIndex: 0,
+              explanation: 'Le schéma Bas-Haut-Bas garde la main droite synchronisée avec la pulsation tout en économisant l’énergie.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.0–1.4 mm',
+              'Gain / Ampli': 'Médiums présents façon Heavy/Thrash',
+              'Technique clé': 'Galops inversés & triolets palm mutés'
+            }
           }
         ]
       },
@@ -850,6 +940,92 @@
               'Médiator conseillé': '1.2 mm rigide',
               'Gain / Ampli': 'Lead précis avec noise gate léger',
               'Technique clé': 'String skipping + étouffement main gauche'
+            }
+          },
+          {
+            id: 'shred-4',
+            title: 'Economy Picking : Transitions Fluides Entre Cordes',
+            youtubeId: 'MAoZNSellrU',
+            durationSec: 560,
+            targetBpm: 165,
+            defaultBpm: 105,
+            videoCaption: 'Combiner aller-retour sur une corde et glissement direct lors des changements de cordes ascendants.',
+            chapters: [
+              { label: '00:00 — Principe de l’economy picking', pct: 0 },
+              { label: '02:30 — Glissement Bas-Haut-Bas-Bas (3 notes/corde)', pct: 27 },
+              { label: '05:40 — Plan ascendant en Mi mineur', pct: 61 },
+              { label: '08:00 — Fluidité sans accroche à 165 BPM', pct: 86 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 4, f: 7, pm: false }, { s: 4, f: 9, pm: false }, { s: 4, f: 10, pm: false }, { s: 3, f: 7, pm: false },
+              { s: 3, f: 9, pm: false }, { s: 3, f: 10, pm: false }, { s: 2, f: 7, pm: false }, { s: 2, f: 9, pm: false },
+              { s: 2, f: 11, pm: false }, { s: 1, f: 8, pm: false }, { s: 1, f: 10, pm: false }, { s: 1, f: 12, pm: false },
+              { s: 0, f: 8, pm: false }, { s: 0, f: 10, pm: false }, { s: 0, f: 12, pm: false }, { s: 0, f: 15, pm: false }
+            ],
+            checklist: [
+              'Enchaîner la dernière note d’une corde et la première de la suivante dans le même sens',
+              'Ne pas accélérer le coup glissé par rapport au débit des autres notes',
+              'Garder un son uniforme entre les notes jouées en aller-retour et en glissé'
+            ],
+            quiz: {
+              question: 'En montant une gamme à 3 notes par corde en economy picking, comment passe-t-on à la corde plus aiguë ?',
+              options: [
+                'Par un second coup vers le bas continu (sweep) dans le même mouvement',
+                'Par un grand saut du médiator par-dessus la corde suivante',
+                'En jouant uniquement en hammer-on'
+              ],
+              correctIndex: 0,
+              explanation: 'L’economy picking prolonge le 3e coup (vers le bas) directement sur la corde inférieure, éliminant tout mouvement inutile.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.38–1.5 mm pointe biseautée',
+              'Gain / Ampli': 'Micro chevalet ou manche + léger compresseur',
+              'Technique clé': 'Economy picking 3 notes/corde'
+            }
+          },
+          {
+            id: 'shred-5',
+            title: 'Plans de Tapping Créatifs sur Gammes Shred',
+            youtubeId: 'jzfpiPmrE1I',
+            durationSec: 590,
+            targetBpm: 155,
+            defaultBpm: 100,
+            videoCaption: 'Développer des séquences linéaires et intervalles rapides sur une et deux cordes en tapping.',
+            chapters: [
+              { label: '00:00 — Séquence de 4 notes par groupe', pct: 0 },
+              { label: '02:45 — Déplacements de la main droite sur la gamme', pct: 28 },
+              { label: '06:10 — Combinaison tapping + slides', pct: 62 },
+              { label: '08:30 — Motif shred complet', pct: 86 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 1, f: 12, pm: false }, { s: 1, f: 5, pm: false }, { s: 1, f: 8, pm: false }, { s: 1, f: 13, pm: false },
+              { s: 1, f: 5, pm: false }, { s: 1, f: 8, pm: false }, { s: 1, f: 15, pm: false }, { s: 1, f: 7, pm: false },
+              { s: 1, f: 10, pm: false }, { s: 1, f: 17, pm: false }, { s: 1, f: 8, pm: false }, { s: 1, f: 12, pm: false },
+              { s: 0, f: 17, pm: false }, { s: 0, f: 10, pm: false }, { s: 0, f: 12, pm: false }, { s: 0, f: 19, pm: false }
+            ],
+            checklist: [
+              'Maintenir une intensité constante entre les notes tapées et les hammer-ons',
+              'Anticiper visuellement les frettes cibles de la main droite',
+              'Contrôler les cordes voisines avec l’index gauche et la paume droite'
+            ],
+            quiz: {
+              question: 'Quel exercice améliore le plus la précision mélodique en tapping ?',
+              options: [
+                'Déplacer la note tapée de la main droite en suivant les degrés de la gamme',
+                'Taper toujours la même frette les yeux fermés',
+                'Désactiver l’étouffement des cordes graves'
+              ],
+              correctIndex: 0,
+              explanation: 'Faire chanter les degrés de la gamme à la main droite transforme un simple effet en véritable phrase mélodique.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': 'Tapping majeur/index main droite',
+              'Gain / Ampli': 'Sustain riche + delay 320 ms',
+              'Technique clé': 'Tapping scalaire & déplacements mélodiques'
             }
           }
         ]
@@ -993,6 +1169,92 @@
               'Gain / Ampli': 'Compression naturelle + micro manche ou chevalet',
               'Technique clé': 'Two-hand tapping sur triades'
             }
+          },
+          {
+            id: 'sweep-4',
+            title: 'Arpèges Sweep 4 Cordes (Mineur & Diminué)',
+            youtubeId: '_TMXTsogN50',
+            durationSec: 505,
+            targetBpm: 150,
+            defaultBpm: 95,
+            videoCaption: 'Passer le cap intermédiaire du sweep 4 cordes avec transitions diminuées ultra-tendues.',
+            chapters: [
+              { label: '00:00 — Forme 4 cordes en Ré mineur', pct: 0 },
+              { label: '02:20 — Arpège diminué 7e symétrique', pct: 28 },
+              { label: '05:10 — Retournement & pull-off au sommet', pct: 61 },
+              { label: '07:10 — Séquence enchaînée Dm → C#dim7', pct: 85 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 3, f: 12, pm: false }, { s: 2, f: 10, pm: false }, { s: 1, f: 10, pm: false }, { s: 0, f: 10, pm: false },
+              { s: 0, f: 13, pm: false }, { s: 0, f: 10, pm: false }, { s: 1, f: 10, pm: false }, { s: 2, f: 10, pm: false },
+              { s: 3, f: 11, pm: false }, { s: 2, f: 9, pm: false }, { s: 1, f: 8, pm: false }, { s: 0, f: 9, pm: false },
+              { s: 0, f: 12, pm: false }, { s: 0, f: 9, pm: false }, { s: 1, f: 8, pm: false }, { s: 2, f: 9, pm: false }
+            ],
+            checklist: [
+              'Effectuer le mini-barré roulé sur la corde de Sol, Si et Mi aigu sans résonance simultanée',
+              'Respecter le geste continu du médiator sur les 4 cordes',
+              'Travailler la transition entre l’arpège mineur et l’arpège diminué'
+            ],
+            quiz: {
+              question: 'Quelle propriété rend l’arpège diminué 7e si pratique en metal néoclassique ?',
+              options: [
+                'Sa structure symétrique de tierces mineures se transpose facilement toutes les 3 frettes',
+                'Il ne contient que des cordes à vide',
+                'Il se joue uniquement sans médiator'
+              ],
+              correctIndex: 0,
+              explanation: 'Un arpège diminué 7e reste composé des mêmes notes lorsqu’on le décale de 3 cases, permettant des montées fulgurantes.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.5 mm rigide',
+              'Gain / Ampli': 'Micro manche fluide et défini',
+              'Technique clé': 'Sweep 4 cordes + arpèges diminués'
+            }
+          },
+          {
+            id: 'sweep-5',
+            title: 'Arpèges Néoclassiques en Mineur Harmonique',
+            youtubeId: '6De4Y4BzIgQ',
+            durationSec: 575,
+            targetBpm: 145,
+            defaultBpm: 90,
+            videoCaption: 'Enchaîner les arpèges propres à Yngwie Malmsteen et Jason Becker sur une progression baroque.',
+            chapters: [
+              { label: '00:00 — Harmonie baroque Am - Dm - E7', pct: 0 },
+              { label: '02:40 — Arpège de E7 (tierce majeure G#)', pct: 28 },
+              { label: '05:50 — Enchaînement fluide Am → E7 → Am', pct: 61 },
+              { label: '08:15 — Final néoclassique avec vibrato', pct: 86 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'E'],
+            tabSteps: [
+              { s: 2, f: 14, pm: false }, { s: 1, f: 13, pm: false }, { s: 0, f: 12, pm: false }, { s: 0, f: 17, pm: false },
+              { s: 0, f: 12, pm: false }, { s: 1, f: 13, pm: false }, { s: 2, f: 13, pm: false }, { s: 1, f: 12, pm: false },
+              { s: 0, f: 10, pm: false }, { s: 0, f: 16, pm: false }, { s: 0, f: 10, pm: false }, { s: 1, f: 12, pm: false },
+              { s: 2, f: 13, pm: false }, { s: 2, f: 14, pm: false }, { s: 1, f: 13, pm: false }, { s: 0, f: 17, pm: false }
+            ],
+            checklist: [
+              'Mettre en valeur la sensible (Sol#) sur l’accord de Mi7 avant de résoudre sur La',
+              'Conserver une propreté parfaite lors du changement de position',
+              'Terminer la phrase par un vibrato maîtrisé sur la tonique'
+            ],
+            quiz: {
+              question: 'Quelle note caractérise le passage de l’arpège de La mineur vers l’accord de dominante E7 en mineur harmonique ?',
+              options: [
+                'Le Sol# (tierce majeure de Mi et sensible de La mineur)',
+                'Le Do#',
+                'Le Sib'
+              ],
+              correctIndex: 0,
+              explanation: 'Le Sol# crée une forte attraction vers le La et signe immédiatement la couleur néoclassique.'
+            },
+            techSpecs: {
+              'Accordage': 'Standard E (E A D G B e)',
+              'Médiator conseillé': '1.5 mm',
+              'Gain / Ampli': 'Micro manche + overdrive typé strat',
+              'Technique clé': 'Progressions d’arpèges baroques'
+            }
           }
         ]
       },
@@ -1091,6 +1353,92 @@
               'Médiator conseillé': '1.5 mm rigide pour attaque claquante',
               'Gain / Ampli': 'Overdrive boost + noise gate rapide',
               'Technique clé': 'Polymètre 5/8 sur 4/4 + chugs serrés'
+            }
+          },
+          {
+            id: 'djent-3',
+            title: 'Riffs Metalcore & Djent Modernes en Drop C',
+            youtubeId: '00RDzzbqdt8',
+            durationSec: 545,
+            targetBpm: 150,
+            defaultBpm: 105,
+            videoCaption: 'Associer chugs percutants, harmoniques pincées, slides graves et arpèges suspendus en Drop C.',
+            chapters: [
+              { label: '00:00 — Vocabulaire metalcore moderne', pct: 0 },
+              { label: '02:30 — Chugs + accords ouverts mélodiques', pct: 28 },
+              { label: '05:40 — Dissonances de seconde mineure', pct: 62 },
+              { label: '07:50 — Groove complet à 150 BPM', pct: 86 }
+            ],
+            tuningNotes: ['d', 'A', 'F', 'C', 'G', 'C'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false }, { s: 3, f: 9, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 8, pm: false }, { s: 3, f: 10, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 1, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 3, pm: false },
+              { s: 4, f: 5, pm: false }, { s: 3, f: 7, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: false }
+            ],
+            checklist: [
+              'Alterner attaques sèches sur la 6e corde et arpèges ouverts sur les cordes médiums',
+              'Maîtriser les petits slides rapides pour dynamiser le groove',
+              'Éviter toute résonance résiduelle pendant les pauses'
+            ],
+            quiz: {
+              question: 'Quel intervalle crée la tension agressive typique des breakdowns metalcore/djent ?',
+              options: [
+                'La seconde mineure (deux notes distantes d’un seul demi-ton jouées ensemble ou en succession serrée)',
+                'L’accord parfait majeur en position ouverte',
+                'L’octave pure sans distorsion'
+              ],
+              correctIndex: 0,
+              explanation: 'La friction d’un demi-ton (ex. frette 12 sur corde 4 et frette 8 sur corde 3) produit une dissonance tranchante moderne.'
+            },
+            techSpecs: {
+              'Accordage': 'Drop C (C G C F A d)',
+              'Médiator conseillé': '1.4 mm attaque sèche',
+              'Gain / Ampli': 'Ampli high-gain serré + Tube Screamer en boost',
+              'Technique clé': 'Riffing metalcore/djent hybride'
+            }
+          },
+          {
+            id: 'djent-4',
+            title: 'Mesures Impaires (5/4, 7/8) & Grooves Prog Metal',
+            youtubeId: 'LA8Ucl_oDbI',
+            durationSec: 605,
+            targetBpm: 130,
+            defaultBpm: 90,
+            videoCaption: 'Composer et ressentir naturellement les signatures rythmiques asymétriques façon Tool, Dream Theater et Animals As Leaders.',
+            chapters: [
+              { label: '00:00 — Découper le 7/8 en 2+2+3', pct: 0 },
+              { label: '02:50 — Riff asymétrique en Drop C', pct: 28 },
+              { label: '06:20 — Passage en 5/4 (3+2)', pct: 63 },
+              { label: '08:40 — Mise en pratique au métronome', pct: 86 }
+            ],
+            tuningNotes: ['d', 'A', 'F', 'C', 'G', 'C'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 3, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 5, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 7, pm: false }, { s: 5, f: 6, pm: false }, { s: 5, f: 0, pm: true },
+              { s: 5, f: 3, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 8, pm: false }, { s: 5, f: 7, pm: false },
+              { s: 5, f: 5, pm: false }, { s: 5, f: 3, pm: false }, { s: 5, f: 1, pm: false }, { s: 5, f: 0, pm: true }
+            ],
+            checklist: [
+              'Compter intérieurement les subdivisions (1-2 / 1-2 / 1-2-3) plutôt que 1 à 7',
+              'Accentuer le début de chaque sous-groupe rythmique',
+              'Conserver une régularité stricte des croches malgré la mesure impaire'
+            ],
+            quiz: {
+              question: 'Quelle est la méthode la plus efficace pour ressentir une mesure en 7/8 ?',
+              options: [
+                'La subdiviser en groupes de 2 et 3 croches (par ex. 2+2+3 ou 3+2+2)',
+                'Accélérer la dernière croche pour retomber sur 8',
+                'Ignorer les accents de la batterie'
+              ],
+              correctIndex: 0,
+              explanation: 'Penser en groupes asymétriques courts (2+2+3) permet de groover naturellement sur une mesure impaire.'
+            },
+            techSpecs: {
+              'Accordage': 'Drop C (C G C F A d)',
+              'Médiator conseillé': '1.2–1.5 mm',
+              'Gain / Ampli': 'Médiums articulés pour la lisibilité rythmique',
+              'Technique clé': 'Subdivision 7/8 et 5/4 Prog Metal'
             }
           }
         ]
@@ -1191,6 +1539,49 @@
               'Gain / Ampli': 'Micro chevalet + saturation soutenue',
               'Technique clé': 'Pinch harmonics + vibrato large'
             }
+          },
+          {
+            id: 'dropd-3',
+            title: 'Riffs Melodic Death Metal & Notes Pédales',
+            youtubeId: '7dOMSPDgQ0Q',
+            durationSec: 515,
+            targetBpm: 160,
+            defaultBpm: 110,
+            videoCaption: 'Alterner une corde grave en palm mute avec des mélodies sombres sur les cordes aiguës façon In Flames / Arch Enemy.',
+            chapters: [
+              { label: '00:00 — Principe de la note pédale en Ré', pct: 0 },
+              { label: '02:20 — Motif mélodique mineur sur cordes A/D', pct: 27 },
+              { label: '05:10 — Sauts de cordes propres en aller-retour', pct: 60 },
+              { label: '07:15 — Riff mélodeath complet à 160 BPM', pct: 84 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'D'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 4, f: 5, pm: false }, { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 8, pm: false }, { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 3, pm: false }, { s: 5, f: 0, pm: true }, { s: 4, f: 5, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 2, pm: false }, { s: 4, f: 3, pm: false }, { s: 4, f: 0, pm: false }
+            ],
+            checklist: [
+              'Garder la corde de Ré grave (6e corde) étouffée et sèche à chaque retour',
+              'Laisser sonner clairement les notes mélodiques sans palm mute sur la 5e corde',
+              'Synchroniser les sauts de corde avec un poignet détendu'
+            ],
+            quiz: {
+              question: 'Qu’est-ce qu’un riff en note pédale typique du Melodic Death Metal ?',
+              options: [
+                'Une note grave répétée (souvent corde à vide en palm mute) entre chaque note d’une mélodie ascendante ou descendante',
+                'Un accord tenu pendant 8 mesures sans bouger',
+                'Une technique réservée uniquement à la guitare basse'
+              ],
+              correctIndex: 0,
+              explanation: 'La pédale grave ancre la tonalité et donne une assise rythmique lourde tout en propulsant la mélodie.'
+            },
+            techSpecs: {
+              'Accordage': 'Drop D (D A D G B e)',
+              'Médiator conseillé': '1.2–1.4 mm',
+              'Gain / Ampli': 'Son tranchant type suédois (médiums mordants)',
+              'Technique clé': 'Note pédale + saut de corde mélodeath'
+            }
           }
         ]
       },
@@ -1290,6 +1681,49 @@
               'Gain / Ampli': 'High-gain défini + léger reverb cathédrale',
               'Technique clé': 'Mode Phrygien Dominant + note pédale'
             }
+          },
+          {
+            id: 'harm-3',
+            title: 'Riffs Lourds sur Guitare 7 Cordes en Drop A',
+            youtubeId: '1-YsbA26uzs',
+            durationSec: 570,
+            targetBpm: 145,
+            defaultBpm: 100,
+            videoCaption: 'Exploiter la 7e corde grave en Drop A sans perdre en clarté ni en définition dans le mix.',
+            chapters: [
+              { label: '00:00 — Repères sur manche 7 cordes (Drop A)', pct: 0 },
+              { label: '02:35 — Power chords graves & octaves', pct: 27 },
+              { label: '05:50 — Contrôle de la tension et des basses', pct: 62 },
+              { label: '08:10 — Riff massif 7 cordes à 145 BPM', pct: 86 }
+            ],
+            tuningNotes: ['e', 'B', 'G', 'D', 'A', 'A'],
+            tabSteps: [
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 5, f: 3, pm: false }, { s: 5, f: 5, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 4, f: 7, pm: false }, { s: 5, f: 0, pm: true }, { s: 5, f: 1, pm: false },
+              { s: 5, f: 0, pm: true }, { s: 5, f: 0, pm: true }, { s: 4, f: 5, pm: false }, { s: 4, f: 8, pm: false },
+              { s: 5, f: 6, pm: false }, { s: 5, f: 5, pm: false }, { s: 5, f: 3, pm: false }, { s: 5, f: 0, pm: true }
+            ],
+            checklist: [
+              'Éviter d’écraser la corde grave avec les doigts pour ne pas fausser la justesse',
+              'Couper les fréquences sous-graves (HPF / overdrive) pour garder un son précis',
+              'Étouffer les cordes non jouées avec l’index gauche'
+            ],
+            quiz: {
+              question: 'Comment garder un son précis et non boueux sur une guitare 7 cordes en Drop A ?',
+              options: [
+                'Réduire les basses extrêmes avant la saturation et adopter un tirant adapté sur la corde grave',
+                'Mettre les basses et le gain de l’ampli à 10',
+                'Jouer uniquement sur le micro manche avec la tonalité fermée'
+              ],
+              correctIndex: 0,
+              explanation: 'Un filtre coupe-bas (ou overdrive type Tube Screamer) et une corde suffisamment tendue évitent le son baveux dans les graves.'
+            },
+            techSpecs: {
+              'Accordage': 'Drop A 7 cordes (A E A D G B e)',
+              'Médiator conseillé': '1.5 mm rigide',
+              'Gain / Ampli': 'Coupe-bas + médiums définis',
+              'Technique clé': 'Riffing 7 cordes Drop A + muting strict'
+            }
           }
         ]
       }
@@ -1299,9 +1733,9 @@
       { id: 'b1', title: 'Premier Sang (Riff Validé)', desc: 'Compléter votre première leçon interactive', condition: s => s.completedLessons.length >= 1 },
       { id: 'b2', title: 'Mur du Son (150+ BPM)', desc: 'Enregistrer un record personnel à 150 BPM ou plus', condition: s => Object.values(s.bpmRecords).some(v => v >= 150) },
       { id: 'b3', title: 'Discipline de Fer', desc: 'Atteindre une série active de 5 jours ou plus', condition: s => s.streak >= 5 },
-      { id: 'b4', title: 'Polyvalence Metal', desc: 'Compléter au moins 3 leçons dans la plateforme', condition: s => s.completedLessons.length >= 3 },
-      { id: 'b5', title: 'Maître du Manche', desc: 'Valider au moins 8 leçons vidéo sur 15', condition: s => s.completedLessons.length >= 8 },
-      { id: 'b6', title: 'Virtuose RiffForge', desc: 'Compléter les 15 leçons complètes du programme', condition: s => s.completedLessons.length >= getAllLessons().length }
+      { id: 'b4', title: 'Polyvalence Metal', desc: 'Compléter au moins 5 leçons dans la plateforme', condition: s => s.completedLessons.length >= 5 },
+      { id: 'b5', title: 'Maître du Manche', desc: 'Valider au moins 12 leçons vidéo sur 25', condition: s => s.completedLessons.length >= 12 },
+      { id: 'b6', title: 'Virtuose RiffForge', desc: 'Compléter les 25 leçons complètes du programme', condition: s => s.completedLessons.length >= getAllLessons().length }
     ];
 
     const DEFAULT_LEARNERS = {
@@ -1320,19 +1754,29 @@
         bpmRecords: {
           'dropd-1': 125,
           'dropd-2': 95,
+          'dropd-3': 112,
           'thrash-1': 152,
           'thrash-2': 140,
           'thrash-3': 135,
+          'thrash-4': 145,
+          'thrash-5': 126,
           'shred-1': 110,
           'shred-2': 105,
           'shred-3': 95,
+          'shred-4': 108,
+          'shred-5': 102,
           'sweep-1': 95,
           'sweep-2': 110,
           'sweep-3': 95,
+          'sweep-4': 98,
+          'sweep-5': 92,
           'djent-1': 105,
           'djent-2': 95,
+          'djent-3': 108,
+          'djent-4': 94,
           'harm-1': 100,
-          'harm-2': 95
+          'harm-2': 95,
+          'harm-3': 104
         },
         skills: [
           { name: 'Palm Muting & Précision', score: 82 },
@@ -1361,23 +1805,33 @@
         xp: 2680,
         weeklyMinutes: [60, 55, 70, 45, 80, 65, 45],
         monthlyGrid: [2,3,2,2,3,3,2, 2,2,3,1,2,3,3, 3,2,3,2,2,1,3, 3,3,2,2,3,3,2],
-        completedLessons: ['dropd-1', 'dropd-2', 'thrash-1', 'thrash-2', 'djent-1', 'shred-1', 'shred-2'],
+        completedLessons: ['dropd-1', 'dropd-2', 'thrash-1', 'thrash-2', 'thrash-4', 'djent-1', 'djent-3', 'shred-1', 'shred-2'],
         bpmRecords: {
           'dropd-1': 130,
           'dropd-2': 120,
+          'dropd-3': 148,
           'thrash-1': 170,
           'thrash-2': 180,
           'thrash-3': 168,
+          'thrash-4': 184,
+          'thrash-5': 162,
           'shred-1': 155,
           'shred-2': 150,
           'shred-3': 132,
+          'shred-4': 152,
+          'shred-5': 140,
           'sweep-1': 132,
           'sweep-2': 152,
           'sweep-3': 136,
+          'sweep-4': 142,
+          'sweep-5': 134,
           'djent-1': 140,
           'djent-2': 125,
+          'djent-3': 146,
+          'djent-4': 122,
           'harm-1': 135,
-          'harm-2': 128
+          'harm-2': 128,
+          'harm-3': 138
         },
         skills: [
           { name: 'Palm Muting & Précision', score: 92 },
@@ -1753,12 +2207,15 @@
     // =========================================================================
     function renderCatalog() {
       const learner = getActiveLearner();
-      // Onglets catégories
+      // Onglets catégories avec compteur de leçons
       document.getElementById('categoryTabs').innerHTML = CATEGORIES.map(cat => {
         const isActive = cat.id === activeCategory;
+        const countInCat = cat.id === 'all'
+          ? getAllLessons().length
+          : COURSES.filter(c => c.category === cat.id).reduce((sum, c) => sum + c.lessons.length, 0);
         return `
           <button onclick="setCategory('${cat.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isActive ? 'bg-[var(--primary)] text-[var(--primary-foreground)] border-transparent' : 'bg-[var(--card)] text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--content)]'}">
-            ${cat.label}
+            ${cat.label} <span class="font-mono opacity-80">(${countInCat})</span>
           </button>
         `;
       }).join('');
@@ -1773,7 +2230,11 @@
         if (tuning !== 'all' && c.tuning !== tuning) return false;
         if (q) {
           const inCourse = c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.categoryLabel.toLowerCase().includes(q) || c.tuning.toLowerCase().includes(q);
-          const inLessons = c.lessons.some(l => l.title.toLowerCase().includes(q) || l.videoCaption.toLowerCase().includes(q));
+          const inLessons = c.lessons.some(l =>
+            l.title.toLowerCase().includes(q) ||
+            l.videoCaption.toLowerCase().includes(q) ||
+            Object.values(l.techSpecs || {}).some(v => v.toLowerCase().includes(q))
+          );
           if (!inCourse && !inLessons) return false;
         }
         return true;
@@ -2232,8 +2693,24 @@
         </div>
       `).join('');
 
+      // Filtre catégorie du tableau BPM
+      const progFilterEl = document.getElementById('progressCategoryFilter');
+      const selectedProgCat = progFilterEl ? progFilterEl.value || 'all' : 'all';
+      if (progFilterEl) {
+        progFilterEl.innerHTML = CATEGORIES.map(cat =>
+          `<option value="${cat.id}" ${cat.id === selectedProgCat ? 'selected' : ''}>${cat.label}</option>`
+        ).join('');
+      }
+      const visibleLessons = selectedProgCat === 'all'
+        ? allLessons
+        : allLessons.filter(({ course }) => course.category === selectedProgCat);
+      const countEl = document.getElementById('progressTableCount');
+      if (countEl) {
+        countEl.textContent = `${visibleLessons.length} / ${allLessons.length} exercices`;
+      }
+
       // Tableau BPM
-      document.getElementById('bpmTableBody').innerHTML = allLessons.map(({ course, lesson }) => {
+      document.getElementById('bpmTableBody').innerHTML = visibleLessons.map(({ course, lesson }) => {
         const cur = learner.bpmRecords[lesson.id] || lesson.defaultBpm;
         const pct = Math.min(100, Math.round((cur / lesson.targetBpm) * 100));
         return `
@@ -2332,6 +2809,9 @@
       ['catalogSearch', 'filterDifficulty', 'filterTuning'].forEach(id => {
         document.getElementById(id).addEventListener('input', renderCatalog);
       });
+
+      // Filtre tableau progression BPM
+      document.getElementById('progressCategoryFilter')?.addEventListener('change', renderProgress);
 
       // Contrôles vidéo
       document.getElementById('videoPlayBtn').addEventListener('click', toggleVideoPlayback);
