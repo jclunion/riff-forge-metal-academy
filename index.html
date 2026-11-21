@@ -298,6 +298,7 @@
                     <h2 id="playerLessonTitle" class="text-sm font-bold mt-0.5"></h2>
                   </div>
                   <div class="flex flex-wrap items-center gap-2">
+                    <select id="allLessonsSelect" aria-label="Changer de leçon vidéo" class="max-w-[220px] text-xs bg-[var(--background)] border border-[var(--border)] rounded-md px-2.5 py-1.5 text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"></select>
                     <button id="customYoutubeBtn" type="button" class="px-2.5 py-1.5 rounded-md bg-[var(--content)] hover:bg-[var(--border)] text-xs font-medium transition-colors" title="Remplacer par une autre URL YouTube">
                       Changer vidéo YouTube
                     </button>
@@ -1298,7 +1299,9 @@
       { id: 'b1', title: 'Premier Sang (Riff Validé)', desc: 'Compléter votre première leçon interactive', condition: s => s.completedLessons.length >= 1 },
       { id: 'b2', title: 'Mur du Son (150+ BPM)', desc: 'Enregistrer un record personnel à 150 BPM ou plus', condition: s => Object.values(s.bpmRecords).some(v => v >= 150) },
       { id: 'b3', title: 'Discipline de Fer', desc: 'Atteindre une série active de 5 jours ou plus', condition: s => s.streak >= 5 },
-      { id: 'b4', title: 'Polyvalence Metal', desc: 'Compléter au moins 3 leçons dans la plateforme', condition: s => s.completedLessons.length >= 3 }
+      { id: 'b4', title: 'Polyvalence Metal', desc: 'Compléter au moins 3 leçons dans la plateforme', condition: s => s.completedLessons.length >= 3 },
+      { id: 'b5', title: 'Maître du Manche', desc: 'Valider au moins 8 leçons vidéo sur 15', condition: s => s.completedLessons.length >= 8 },
+      { id: 'b6', title: 'Virtuose RiffForge', desc: 'Compléter les 15 leçons complètes du programme', condition: s => s.completedLessons.length >= getAllLessons().length }
     ];
 
     const DEFAULT_LEARNERS = {
@@ -1316,12 +1319,20 @@
         completedLessons: ['dropd-1', 'thrash-1'],
         bpmRecords: {
           'dropd-1': 125,
+          'dropd-2': 95,
           'thrash-1': 152,
           'thrash-2': 140,
+          'thrash-3': 135,
           'shred-1': 110,
+          'shred-2': 105,
+          'shred-3': 95,
           'sweep-1': 95,
+          'sweep-2': 110,
+          'sweep-3': 95,
           'djent-1': 105,
-          'harm-1': 100
+          'djent-2': 95,
+          'harm-1': 100,
+          'harm-2': 95
         },
         skills: [
           { name: 'Palm Muting & Précision', score: 82 },
@@ -1350,15 +1361,23 @@
         xp: 2680,
         weeklyMinutes: [60, 55, 70, 45, 80, 65, 45],
         monthlyGrid: [2,3,2,2,3,3,2, 2,2,3,1,2,3,3, 3,2,3,2,2,1,3, 3,3,2,2,3,3,2],
-        completedLessons: ['dropd-1', 'thrash-1', 'thrash-2', 'djent-1', 'shred-1'],
+        completedLessons: ['dropd-1', 'dropd-2', 'thrash-1', 'thrash-2', 'djent-1', 'shred-1', 'shred-2'],
         bpmRecords: {
           'dropd-1': 130,
+          'dropd-2': 120,
           'thrash-1': 170,
           'thrash-2': 180,
+          'thrash-3': 168,
           'shred-1': 155,
+          'shred-2': 150,
+          'shred-3': 132,
           'sweep-1': 132,
+          'sweep-2': 152,
+          'sweep-3': 136,
           'djent-1': 140,
-          'harm-1': 135
+          'djent-2': 125,
+          'harm-1': 135,
+          'harm-2': 128
         },
         skills: [
           { name: 'Palm Muting & Précision', score: 92 },
@@ -1388,7 +1407,20 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.learners && parsed.activeLearnerId) return parsed;
+          if (parsed && parsed.learners && parsed.activeLearnerId) {
+            // Fusionner les nouveaux enregistrements BPM pour les leçons ajoutées
+            Object.keys(DEFAULT_LEARNERS).forEach(id => {
+              if (parsed.learners[id]) {
+                parsed.learners[id].bpmRecords = {
+                  ...DEFAULT_LEARNERS[id].bpmRecords,
+                  ...(parsed.learners[id].bpmRecords || {})
+                };
+              } else {
+                parsed.learners[id] = JSON.parse(JSON.stringify(DEFAULT_LEARNERS[id]));
+              }
+            });
+            return parsed;
+          }
         }
       } catch (e) {}
       return {
@@ -1626,8 +1658,8 @@
         </div>
       `).join('');
 
-      // Cours en cours
-      const activeCoursesHtml = COURSES.slice(0, 4).map(course => {
+      // Cours en cours (tous les cours du programme)
+      const activeCoursesHtml = COURSES.map(course => {
         const done = course.lessons.filter(l => learner.completedLessons.includes(l.id)).length;
         const pct = Math.round((done / course.lessons.length) * 100);
         const nextLesson = course.lessons.find(l => !learner.completedLessons.includes(l.id)) || course.lessons[0];
@@ -1693,11 +1725,11 @@
         </div>
       `).join('');
 
-      // Leçons vidéo recommandées
+      // Leçons vidéo recommandées (jusqu'à 6)
       const recs = getAllLessons()
         .filter(item => !learner.completedLessons.includes(item.lesson.id))
-        .slice(0, 4);
-      const listToRender = recs.length ? recs : getAllLessons().slice(0, 4);
+        .slice(0, 6);
+      const listToRender = recs.length ? recs : getAllLessons().slice(0, 6);
       document.getElementById('recommendedLessonsList').innerHTML = listToRender.map(({ course, lesson }) => `
         <div class="p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] flex items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
@@ -1739,11 +1771,16 @@
         if (activeCategory !== 'all' && c.category !== activeCategory) return false;
         if (diff !== 'all' && c.difficulty !== diff) return false;
         if (tuning !== 'all' && c.tuning !== tuning) return false;
-        if (q && !(c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.categoryLabel.toLowerCase().includes(q) || c.tuning.toLowerCase().includes(q))) return false;
+        if (q) {
+          const inCourse = c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.categoryLabel.toLowerCase().includes(q) || c.tuning.toLowerCase().includes(q);
+          const inLessons = c.lessons.some(l => l.title.toLowerCase().includes(q) || l.videoCaption.toLowerCase().includes(q));
+          if (!inCourse && !inLessons) return false;
+        }
         return true;
       });
 
-      document.getElementById('catalogCount').textContent = `${filtered.length} cours`;
+      const totalFilteredLessons = filtered.reduce((sum, c) => sum + c.lessons.length, 0);
+      document.getElementById('catalogCount').textContent = `${filtered.length} cours • ${totalFilteredLessons} leçons vidéo`;
 
       if (!filtered.length) {
         document.getElementById('catalogGrid').innerHTML = `
@@ -1757,7 +1794,20 @@
       document.getElementById('catalogGrid').innerHTML = filtered.map(course => {
         const done = course.lessons.filter(l => learner.completedLessons.includes(l.id)).length;
         const pct = Math.round((done / course.lessons.length) * 100);
-        const firstLesson = course.lessons[0];
+        const nextLesson = course.lessons.find(l => !learner.completedLessons.includes(l.id)) || course.lessons[0];
+        const totalMin = Math.round(course.lessons.reduce((s, l) => s + l.durationSec, 0) / 60);
+        const lessonsListHtml = course.lessons.map((l, idx) => {
+          const isDone = learner.completedLessons.includes(l.id);
+          return `
+            <button onclick="openLesson('${l.id}')" class="w-full text-left px-2.5 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--content)] flex items-center justify-between gap-2 text-xs transition-colors">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="shrink-0 font-mono ${isDone ? 'text-[var(--success)] font-bold' : 'text-[var(--primary)]'}">${isDone ? '✓' : '▶'}</span>
+                <span class="truncate font-medium">${idx + 1}. ${l.title}</span>
+              </div>
+              <span class="shrink-0 font-mono text-[11px] text-[var(--muted-foreground)] tabular-nums">${formatTime(l.durationSec)}</span>
+            </button>
+          `;
+        }).join('');
         return `
           <article class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between space-y-4">
             <div class="space-y-2.5">
@@ -1767,11 +1817,14 @@
               </div>
               <h3 class="text-sm font-bold leading-snug">${course.title}</h3>
               <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">${course.description}</p>
+              <div class="space-y-1.5 pt-1">
+                ${lessonsListHtml}
+              </div>
             </div>
             <div class="space-y-3 pt-2 border-t border-[var(--border)]">
               <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
-                <span>${course.difficulty} • ${course.duration}</span>
-                <span class="font-mono tabular-nums">${course.lessons.length} leçon${course.lessons.length > 1 ? 's' : ''}</span>
+                <span>${course.difficulty} • ~${totalMin} min vidéo</span>
+                <span class="font-mono tabular-nums">${done}/${course.lessons.length} leçons</span>
               </div>
               <div class="space-y-1">
                 <div class="flex justify-between text-xs">
@@ -1782,8 +1835,8 @@
                   <div class="h-full bg-[var(--primary)]" style="width: ${pct}%"></div>
                 </div>
               </div>
-              <button onclick="openLesson('${firstLesson.id}')" class="w-full py-2 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium hover:opacity-90 transition-opacity">
-                ${done > 0 ? 'Poursuivre le cours' : 'Démarrer le cours'}
+              <button onclick="openLesson('${nextLesson.id}')" class="w-full py-2 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-medium hover:opacity-90 transition-opacity">
+                ${done === course.lessons.length ? 'Revoir le cours' : done > 0 ? 'Poursuivre le cours' : 'Démarrer le cours'}
               </button>
             </div>
           </article>
@@ -1875,6 +1928,19 @@
       document.getElementById('playerTuningBadge').textContent = course.tuning;
       document.getElementById('playerLessonTitle').textContent = lesson.title;
       document.getElementById('videoSlotCaption').textContent = lesson.videoCaption;
+
+      // Sélecteur rapide des 15 leçons vidéo
+      const allSel = document.getElementById('allLessonsSelect');
+      if (allSel) {
+        allSel.innerHTML = COURSES.map(c => `
+          <optgroup label="${c.title}">
+            ${c.lessons.map(l => {
+              const doneMark = learner.completedLessons.includes(l.id) ? '✓ ' : '';
+              return `<option value="${l.id}" ${l.id === lesson.id ? 'selected' : ''}>${doneMark}${l.title}</option>`;
+            }).join('')}
+          </optgroup>
+        `).join('');
+      }
 
       // Bouton marquer comme terminée
       const isDone = learner.completedLessons.includes(lesson.id);
@@ -2243,6 +2309,11 @@
       // Bouton rapide reprendre
       document.getElementById('quickResumeBtn').addEventListener('click', () => {
         openLesson(getActiveLearner().lastLessonId || 'thrash-1');
+      });
+
+      // Sélecteur direct des 15 leçons dans le lecteur
+      document.getElementById('allLessonsSelect')?.addEventListener('change', e => {
+        if (e.target.value) openLesson(e.target.value);
       });
 
       // Ajout rapide de 15 min de pratique
